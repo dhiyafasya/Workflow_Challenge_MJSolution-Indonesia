@@ -6,6 +6,7 @@ import { initWebSocket } from './websocket.js';
 import devicesRouter from './routes/devices.js';
 import contentsRouter from './routes/contents.js';
 import playlistsRouter from './routes/playlists.js';
+import authRouter, { authenticate } from './routes/auth.js';
 
 dotenv.config();
 
@@ -15,9 +16,11 @@ const server = http.createServer(app);
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/devices', devicesRouter);
-app.use('/api/contents', contentsRouter);
-app.use('/api/playlists', playlistsRouter);
+app.use('/api/auth', authRouter);
+
+app.use('/api/devices', authenticate, devicesRouter);
+app.use('/api/contents', authenticate, contentsRouter);
+app.use('/api/playlists', authenticate, playlistsRouter);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

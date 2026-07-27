@@ -48,3 +48,14 @@ CREATE TABLE IF NOT EXISTS playlists (
 
 ALTER TABLE playlists ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public access for playlists" ON playlists FOR ALL USING (true);
+
+-- Users table for authentication
+CREATE TABLE IF NOT EXISTS users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users can read own data" ON users FOR SELECT USING (auth.uid() = id);
