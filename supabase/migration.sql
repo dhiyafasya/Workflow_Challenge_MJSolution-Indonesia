@@ -35,3 +35,16 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE TRIGGER devices_update_last_seen
   BEFORE UPDATE ON devices
   FOR EACH ROW EXECUTE FUNCTION update_last_seen();
+
+-- Playlist: hubungan device-content dengan urutan
+CREATE TABLE IF NOT EXISTS playlists (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  device_id UUID REFERENCES devices(id) ON DELETE CASCADE,
+  content_id UUID REFERENCES contents(id) ON DELETE CASCADE,
+  urutan INT DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(device_id, content_id)
+);
+
+ALTER TABLE playlists ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public access for playlists" ON playlists FOR ALL USING (true);

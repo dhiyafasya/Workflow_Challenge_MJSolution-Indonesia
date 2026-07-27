@@ -5,6 +5,7 @@ import http from 'http';
 import { initWebSocket } from './websocket.js';
 import devicesRouter from './routes/devices.js';
 import contentsRouter from './routes/contents.js';
+import playlistsRouter from './routes/playlists.js';
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 
 app.use('/api/devices', devicesRouter);
 app.use('/api/contents', contentsRouter);
+app.use('/api/playlists', playlistsRouter);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

@@ -28,4 +28,13 @@ export const api = {
     request(`/contents/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteContent: (id: string) =>
     request(`/contents/${id}`, { method: 'DELETE' }),
+
+  getPlaylists: (deviceId?: string) =>
+    request(deviceId ? `/playlists/device/${deviceId}` : '/playlists'),
+  addToPlaylist: (deviceId: string, contentId: string) =>
+    request('/playlists', { method: 'POST', body: JSON.stringify({ device_id: deviceId, content_id: contentId }) }),
+  removeFromPlaylist: (id: string) =>
+    request(`/playlists/${id}`, { method: 'DELETE' }),
+  pushContent: (deviceId: string, contentId: string) =>
+    request(`/playlists/push/${deviceId}`, { method: 'POST', body: JSON.stringify({ content_id: contentId }) }),
 };
