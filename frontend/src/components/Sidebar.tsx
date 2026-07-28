@@ -1,6 +1,8 @@
 import { NavLink } from 'react-router-dom';
 
 interface Props {
+  collapsed: boolean;
+  onToggle: () => void;
   onLogout: () => void;
 }
 
@@ -30,47 +32,60 @@ const icons = {
   ),
 };
 
-export default function Sidebar({ onLogout }: Props) {
+const hamburgerIcon = (open: boolean) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    {open ? (
+      <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>
+    ) : (
+      <><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></>
+    )}
+  </svg>
+);
+
+const links = [
+  { to: '/', end: true, icon: icons.overview, label: 'Overview' },
+  { to: '/devices', icon: icons.devices, label: 'Devices' },
+  { to: '/contents', icon: icons.contents, label: 'Contents' },
+  { to: '/playlist', icon: icons.playlist, label: 'Playlist' },
+];
+
+export default function Sidebar({ collapsed, onToggle, onLogout }: Props) {
   return (
-    <div className="sidebar">
-      <div className="sidebar-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{
-            width: 36, height: 36, borderRadius: 10, background: '#0f3460',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
-            </svg>
-          </div>
-          <div>
-            <h1>Signage Panel</h1>
-            <p>MJ Solution</p>
+    <>
+      {!collapsed && <div className="sidebar-overlay" onClick={onToggle} />}
+      <div className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
+        <div className="sidebar-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, justifyContent: collapsed ? 'center' : 'flex-start' }}>
+            <button className="hamburger-btn" onClick={onToggle} title={collapsed ? 'Buka menu' : 'Tutup menu'}>
+              {hamburgerIcon(!collapsed)}
+            </button>
+            {!collapsed && (
+              <div>
+                <h1>Signage Panel</h1>
+                <p>MJ Solution</p>
+              </div>
+            )}
           </div>
         </div>
+
+        <nav className="sidebar-nav">
+          {links.map((link) => (
+            <NavLink key={link.to} to={link.to} end={link.end} className={({ isActive }) => isActive ? 'active' : ''} title={collapsed ? link.label : undefined}>
+              <span className="icon">{link.icon}</span>
+              {!collapsed && <span className="nav-label">{link.label}</span>}
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className="sidebar-footer">
+          <button onClick={onLogout} title="Logout">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            {!collapsed && <span style={{ marginLeft: 8 }}>Logout</span>}
+          </button>
+        </div>
       </div>
-      <nav className="sidebar-nav">
-        <NavLink to="/" end className={({ isActive }) => isActive ? 'active' : ''}>
-          <span className="icon">{icons.overview}</span> Overview
-        </NavLink>
-        <NavLink to="/devices" className={({ isActive }) => isActive ? 'active' : ''}>
-          <span className="icon">{icons.devices}</span> Devices
-        </NavLink>
-        <NavLink to="/contents" className={({ isActive }) => isActive ? 'active' : ''}>
-          <span className="icon">{icons.contents}</span> Contents
-        </NavLink>
-        <NavLink to="/playlist" className={({ isActive }) => isActive ? 'active' : ''}>
-          <span className="icon">{icons.playlist}</span> Playlist
-        </NavLink>
-      </nav>
-      <div className="sidebar-footer">
-        <button onClick={onLogout}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6, verticalAlign: 'middle' }}>
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
-          </svg>
-          Logout
-        </button>
-      </div>
-    </div>
+    </>
   );
 }

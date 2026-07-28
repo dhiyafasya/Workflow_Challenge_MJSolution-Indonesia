@@ -9,11 +9,16 @@ import DeviceClient from './pages/DeviceClient';
 import Login from './pages/Login';
 
 function AdminLayout({ children }: { children: React.ReactNode }) {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [, setToken] = useState(localStorage.getItem('token') || '');
 
   return (
     <div className="layout">
-      <Sidebar onLogout={() => { localStorage.removeItem('token'); setToken(''); window.location.reload(); }} />
+      <Sidebar
+        collapsed={!sidebarOpen}
+        onToggle={() => setSidebarOpen((prev) => !prev)}
+        onLogout={() => { localStorage.removeItem('token'); setToken(''); window.location.reload(); }}
+      />
       <main className="main-content">{children}</main>
     </div>
   );
