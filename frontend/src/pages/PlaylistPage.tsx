@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { api } from '../api';
 import Modal from '../components/Modal';
+import { Search, Plus, ChevronLeft, ChevronRight, ChevronDown, Copy, Check, Send, Trash2 } from 'lucide-react';
 
 interface Device { id: string; nama: string; lokasi: string; status: string; last_seen: string | null; }
 interface Content { id: string; judul: string; tipe: string; payload: string; }
@@ -100,16 +101,12 @@ export default function PlaylistPage() {
       <div className="card">
         <div className="devices-toolbar">
           <div className="search-box">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
+            <Search size={16} />
             <input placeholder="Cari device..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
           </div>
           <div className="toolbar-actions">
             <button className="btn btn-primary" onClick={() => openAddModal()}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
+              <Plus size={16} />
               Tambah ke Playlist
             </button>
           </div>
@@ -130,9 +127,9 @@ export default function PlaylistPage() {
                     <span className="fw-600">{d.nama}</span>
                     <button className="btn-icon btn-icon-copy" onClick={(e) => { e.stopPropagation(); copyUrl(d.id); }} title="Copy device URL">
                       {copiedId === d.id ? (
-                        <svg className="icon-check" width="14" height="14" viewBox="0 0 24 24" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        <Check size={14} className="icon-check" />
                       ) : (
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        <Copy size={14} />
                       )}
                     </button>
                     <span className={`badge ${d.status === 'online' ? 'badge-online' : 'badge-offline'}`}>{d.status}</span>
@@ -141,11 +138,9 @@ export default function PlaylistPage() {
                 </div>
                 <div className="accordion-right">
                   <button className="btn-icon btn-icon-primary" onClick={(e) => { e.stopPropagation(); openAddModal(d.id); }} title="Tambah konten">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <Plus size={16} />
                   </button>
-                  <svg className={`accordion-chevron ${isExpanded ? 'chevron-open' : ''}`} width="20" height="20" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="6 9 12 15 18 9"/>
-                  </svg>
+                  <ChevronDown size={20} className={`accordion-chevron ${isExpanded ? 'chevron-open' : ''}`} />
                 </div>
               </div>
               {isExpanded && (
@@ -164,10 +159,10 @@ export default function PlaylistPage() {
                             <td>
                               <div className="playlist-actions">
                                 <button className="btn-icon btn-icon-primary" onClick={() => pushContent(d.id, p.content_id)} title="Push Ulang">
-                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                                  <Send size={16} />
                                 </button>
                                 <button className="btn-icon btn-icon-danger" onClick={() => removeFromPlaylist(p.id)} title="Hapus dari playlist">
-                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                  <Trash2 size={16} />
                                 </button>
                               </div>
                             </td>
@@ -185,13 +180,13 @@ export default function PlaylistPage() {
       {totalPages > 1 && (
         <div className="pagination">
           <button className="btn-icon page-btn" disabled={safePage <= 1} onClick={() => setPage(safePage - 1)} title="Sebelumnya">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            <ChevronLeft size={16} />
           </button>
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
             <button key={p} className={`page-btn ${p === safePage ? 'page-active' : ''}`} onClick={() => setPage(p)}>{p}</button>
           ))}
           <button className="btn-icon page-btn" disabled={safePage >= totalPages} onClick={() => setPage(safePage + 1)} title="Selanjutnya">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            <ChevronRight size={16} />
           </button>
         </div>
       )}

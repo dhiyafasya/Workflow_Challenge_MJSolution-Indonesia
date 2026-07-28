@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Monitor } from 'lucide-react';
 
 interface Content {
   id: string;
@@ -81,9 +82,7 @@ function DeviceView({ deviceId }: { deviceId: string }) {
       ) : (
         <div className="dc-centered-col">
           <div className="dc-icon-box">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
-            </svg>
+            <Monitor size={36} strokeWidth={1.5} />
           </div>
           <h1 className="dc-device-id">{deviceId}</h1>
           <div className={`dc-status-badge ${wsStatus === 'connected' ? 'connected' : 'disconnected'}`}>

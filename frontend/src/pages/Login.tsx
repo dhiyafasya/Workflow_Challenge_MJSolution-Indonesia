@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Monitor } from 'lucide-react';
 
 interface Props {
   onLogin: (token: string) => void;
@@ -72,11 +73,7 @@ export default function Login({ onLogin }: Props) {
       <div className="login-card">
         <div className="login-header">
           <div className="login-logo">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-              <line x1="8" y1="21" x2="16" y2="21"/>
-              <line x1="12" y1="17" x2="12" y2="21"/>
-            </svg>
+            <Monitor size={28} />
           </div>
           <h1 className="login-title">Signage Panel</h1>
           <p className="login-subtitle">MJ Solution Indonesia</p>

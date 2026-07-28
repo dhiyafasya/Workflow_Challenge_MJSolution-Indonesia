@@ -35,6 +35,10 @@
   margin-bottom: 16px;
 }
 
+.dc-icon-box svg {
+  stroke: rgba(255,255,255,0.3);
+}
+
 .dc-device-id {
   font-weight: 600;
   font-size: 18px;

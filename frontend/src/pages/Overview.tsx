@@ -1,30 +1,16 @@
 import { useState, useEffect } from 'react';
+import { Monitor, Wifi, WifiOff, FileText } from 'lucide-react';
 import { api } from '../api';
 
 interface Device { id: string; nama: string; lokasi: string; status: string; last_seen: string | null; }
 interface Content { id: string; judul: string; tipe: string; payload: string; created_at: string; }
 
+const iconSize = 22;
 const icons = {
-  devices: (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
-    </svg>
-  ),
-  online: (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/>
-    </svg>
-  ),
-  offline: (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.56 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/>
-    </svg>
-  ),
-  contents: (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
-    </svg>
-  ),
+  devices: <Monitor size={iconSize} strokeWidth={1.5} />,
+  online: <Wifi size={iconSize} strokeWidth={1.5} />,
+  offline: <WifiOff size={iconSize} strokeWidth={1.5} />,
+  contents: <FileText size={iconSize} strokeWidth={1.5} />,
 };
 
 const cards = [
