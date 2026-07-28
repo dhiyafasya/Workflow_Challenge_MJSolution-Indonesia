@@ -64,6 +64,10 @@ export default function ContentsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (form.tipe === 'image' && !uploadedUrl) {
+      alert('Upload gambar terlebih dahulu');
+      return;
+    }
     const payload = form.tipe === 'image' && uploadedUrl ? uploadedUrl : form.payload;
     const filename = form.tipe === 'image' && uploadedUrl ? form.payload : undefined;
     const data = { ...form, payload, filename };
@@ -184,7 +188,7 @@ export default function ContentsPage() {
           </div>
           <div className="modal-actions">
             <button type="button" className="btn btn-secondary" onClick={() => setModalOpen(false)}>Batal</button>
-            <button type="submit" className="btn btn-primary">{editId ? 'Simpan' : 'Tambah'}</button>
+            <button type="submit" className="btn btn-primary" disabled={uploading}>{editId ? 'Simpan' : 'Tambah'}</button>
           </div>
         </form>
       </Modal>
