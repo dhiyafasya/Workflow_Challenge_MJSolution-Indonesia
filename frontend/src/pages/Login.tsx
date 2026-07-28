@@ -11,6 +11,15 @@ export default function Login({ onLogin }: Props) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [passwordWarn, setPasswordWarn] = useState('');
+
+  const validatePassword = (pw: string) => {
+    if (pw.length < 6) return 'Minimal 6 karakter';
+    if (!/[a-z]/.test(pw)) return 'Harus ada huruf kecil';
+    if (!/[A-Z]/.test(pw)) return 'Harus ada huruf besar';
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pw)) return 'Harus ada karakter spesial (#, *, dll)';
+    return '';
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,6 +29,12 @@ export default function Login({ onLogin }: Props) {
 
     try {
       if (mode === 'register') {
+        const pwErr = validatePassword(password);
+        if (pwErr) {
+          setError(pwErr);
+          setLoading(false);
+          return;
+        }
         const regRes = await fetch('http://localhost:3001/api/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -83,8 +98,10 @@ export default function Login({ onLogin }: Props) {
           </div>
           <div className="login-field">
             <label>Password</label>
-            <input type="password" placeholder="Min 6 karakter" value={password}
-              onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+            <input type="password" placeholder="Min 6 karakter, huruf besar/kecil, spesial" value={password}
+              onChange={(e) => { setPassword(e.target.value); setPasswordWarn(validatePassword(e.target.value)); }} required />
+            {mode === 'register' && password && passwordWarn && <p className="login-hint">{passwordWarn}</p>}
+            {mode === 'register' && password && !passwordWarn && <p className="login-hint valid">Password kuat</p>}
           </div>
 
           {error && <p className="login-error">{error}</p>}

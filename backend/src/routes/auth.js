@@ -9,6 +9,10 @@ const JWT_SECRET = process.env.JWT_SECRET || 'default_secret_change_me';
 router.post('/register', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
+  if (password.length < 6) return res.status(400).json({ error: 'Password minimal 6 karakter' });
+  if (!/[a-z]/.test(password)) return res.status(400).json({ error: 'Password harus ada huruf kecil' });
+  if (!/[A-Z]/.test(password)) return res.status(400).json({ error: 'Password harus ada huruf besar' });
+  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) return res.status(400).json({ error: 'Password harus ada karakter spesial (#, *, dll)' });
 
   const hashed = await bcrypt.hash(password, 10);
   const { data, error } = await supabase
