@@ -103,14 +103,14 @@ export default function Overview() {
           {contents.length > 0 && (
             <div className="card overview-card">
               <h3>Content Types</h3>
-              <div className="bar-chart">
+              <div className="bar-chart-col">
                 {contentTypes.map((t, i) => (
-                  <div key={t} className="bar-row">
-                    <span className="bar-label">{typeLabel[t]}</span>
-                    <div className="bar-track">
-                      <div className="bar-fill" style={{ width: `${(typeCounts[i] / maxType) * 100}%` }} />
+                  <div key={t} className="bar-col">
+                    <span className="bar-col-value">{typeCounts[i]}</span>
+                    <div className="bar-col-track">
+                      <div className="bar-col-fill" style={{ height: `${(typeCounts[i] / maxType) * 100}%` }} />
                     </div>
-                    <span className="bar-value">{typeCounts[i]}</span>
+                    <span className="bar-col-label">{typeLabel[t]}</span>
                   </div>
                 ))}
               </div>
