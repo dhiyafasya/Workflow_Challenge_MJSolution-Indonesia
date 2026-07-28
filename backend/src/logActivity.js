@@ -1,19 +1,8 @@
-import { supabase } from '../db.js';
-
-export async function logActivity(req, action, targetType = null, targetId = null, details = null) {
-  try {
-    const user = req.user || null;
-    const ip = req.ip || req.headers['x-forwarded-for'] || req.connection?.remoteAddress || null;
-    await supabase.from('logs').insert({
-      user_id: user?.id || null,
-      email: user?.email || null,
-      action,
-      target_type: targetType,
-      target_id: targetId,
-      details: details ? JSON.stringify(details) : null,
-      ip,
-    });
-  } catch (err) {
-    console.error('Log error:', err.message);
-  }
+export function logActivity(req, action, targetType = null, targetId = null, details = null) {
+  const user = req.user || null;
+  const email = user?.email || '-';
+  const time = new Date().toLocaleTimeString();
+  const target = targetType ? ` ${targetType}${targetId ? `[${targetId.slice(0, 8)}]` : ''}` : '';
+  const detail = details ? ` ${JSON.stringify(details)}` : '';
+  console.log(`[${time}] ${email} → ${action}${target}${detail}`);
 }

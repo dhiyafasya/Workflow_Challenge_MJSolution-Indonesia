@@ -60,18 +60,4 @@ CREATE TABLE IF NOT EXISTS users (
 -- Note: RLS not used on users table because we use custom JWT (not Supabase Auth)
 -- Passwords are hashed with bcrypt for security
 
--- Activity logs for audit trail
-CREATE TABLE IF NOT EXISTS logs (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID,
-  email VARCHAR(255),
-  action VARCHAR(50) NOT NULL,
-  target_type VARCHAR(50),
-  target_id VARCHAR(255),
-  details TEXT,
-  ip VARCHAR(50),
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
 
-ALTER TABLE logs ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public access for logs" ON logs FOR ALL USING (true);
