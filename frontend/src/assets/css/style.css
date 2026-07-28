@@ -310,12 +310,12 @@ input, select, button, textarea {
   width: 32px;
   height: 32px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: transparent;
+  background: #f5f5f7;
   transition: all 0.2s;
 }
 
