@@ -73,6 +73,24 @@ export default function Overview() {
   const maxType = Math.max(...typeCounts, 1);
   const typeLabel: Record<string, string> = { url: 'URL', text: 'Teks', image: 'Gambar' };
 
+  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const monthlyData = (() => {
+    const now = new Date();
+    const months: { label: string; count: number }[] = [];
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const label = `${monthNames[d.getMonth()]} ${String(d.getFullYear()).slice(2)}`;
+      const count = contents.filter((c) => {
+        const cd = new Date(c.created_at);
+        return cd.getFullYear() === d.getFullYear() && cd.getMonth() === d.getMonth();
+      }).length;
+      months.push({ label, count });
+    }
+    return months;
+  })();
+  const maxMonthly = Math.max(...monthlyData.map((m) => m.count), 1);
+
   return (
     <>
       <div className="page-header">
@@ -120,6 +138,11 @@ export default function Overview() {
       )}
 
       <div className="card">
+        <h3>Monthly Trend</h3>
+        <LineChart data={monthlyData} max={maxMonthly} />
+      </div>
+
+      <div className="card">
         <h3>Recent Devices</h3>
         {devices.length === 0 ? (
           <div className="empty-state"><p>Belum ada device terdaftar</p></div>
@@ -140,6 +163,41 @@ export default function Overview() {
         )}
       </div>
     </>
+  );
+}
+
+function LineChart({ data, max }: { data: { label: string; count: number }[]; max: number }) {
+  const w = 700;
+  const h = 200;
+  const pad = { top: 20, right: 20, bottom: 30, left: 30 };
+  const innerW = w - pad.left - pad.right;
+  const innerH = h - pad.top - pad.bottom;
+  const stepX = innerW / (data.length - 1);
+
+  const points = data.map((d, i) => ({
+    x: pad.left + i * stepX,
+    y: pad.top + innerH - (d.count / max) * innerH,
+  }));
+
+  const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ');
+
+  return (
+    <div className="line-chart-wrap">
+      <svg viewBox={`0 0 ${w} ${h}`} className="line-chart-svg">
+        <line x1={pad.left} y1={pad.top + innerH} x2={pad.left + innerW} y2={pad.top + innerH} stroke="#e8e8ed" strokeWidth="1" />
+        {[0.25, 0.5, 0.75, 1].map((r) => (
+          <line key={r} x1={pad.left} y1={pad.top + innerH * (1 - r)} x2={pad.left + innerW} y2={pad.top + innerH * (1 - r)} stroke="#f5f5f7" strokeWidth="1" />
+        ))}
+        <path d={linePath} fill="none" stroke="#007aff" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+        {points.map((p, i) => (
+          <g key={i}>
+            <circle cx={p.x} cy={p.y} r="4" fill="#007aff" stroke="#fff" strokeWidth="2" />
+            <text x={p.x} y={pad.top + innerH + 18} textAnchor="middle" fontSize="10" fill="#86868b">{data[i].label}</text>
+            <text x={p.x} y={p.y - 10} textAnchor="middle" fontSize="11" fontWeight="600" fill="#1d1d1f">{data[i].count}</text>
+          </g>
+        ))}
+      </svg>
+    </div>
   );
 }
 

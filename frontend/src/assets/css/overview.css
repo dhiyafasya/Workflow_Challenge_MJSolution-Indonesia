@@ -167,3 +167,16 @@
   text-align: center;
   width: 40px;
 }
+
+.line-chart-wrap {
+  width: 100%;
+  overflow-x: auto;
+  padding: 8px 0;
+}
+
+.line-chart-svg {
+  width: 100%;
+  min-width: 400px;
+  height: auto;
+  display: block;
+}
