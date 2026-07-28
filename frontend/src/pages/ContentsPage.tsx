@@ -6,19 +6,34 @@ interface Content { id: string; judul: string; tipe: string; payload: string; cr
 export default function ContentsPage() {
   const [contents, setContents] = useState<Content[]>([]);
   const [form, setForm] = useState({ judul: '', tipe: 'url', payload: '' });
+  const [editId, setEditId] = useState('');
 
   useEffect(() => {
     api.getContents().then(setContents).catch(console.error);
   }, []);
 
+  const resetForm = () => {
+    setForm({ judul: '', tipe: 'url', payload: '' });
+    setEditId('');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await api.createContent(form);
+      if (editId) {
+        await api.updateContent(editId, form);
+      } else {
+        await api.createContent(form);
+      }
       const updated = await api.getContents();
       setContents(updated);
-      setForm({ judul: '', tipe: 'url', payload: '' });
+      resetForm();
     } catch (err) { alert(err); }
+  };
+
+  const handleEdit = (c: Content) => {
+    setForm({ judul: c.judul, tipe: c.tipe, payload: c.payload });
+    setEditId(c.id);
   };
 
   const handleDelete = async (id: string) => {
@@ -26,6 +41,7 @@ export default function ContentsPage() {
     try {
       await api.deleteContent(id);
       setContents((prev) => prev.filter((c) => c.id !== id));
+      if (editId === id) resetForm();
     } catch (err) { alert(err); }
   };
 
@@ -39,7 +55,7 @@ export default function ContentsPage() {
       </div>
 
       <div className="card">
-        <h3>Tambah Content</h3>
+        <h3>{editId ? 'Edit Content' : 'Tambah Content'}</h3>
         <form onSubmit={handleSubmit}>
           <div className="form-row">
             <input placeholder="Judul" value={form.judul}
@@ -51,7 +67,8 @@ export default function ContentsPage() {
             </select>
             <input placeholder="Payload / URL" value={form.payload}
               onChange={(e) => setForm({ ...form, payload: e.target.value })} />
-            <button type="submit" className="btn btn-primary">Tambah</button>
+            <button type="submit" className="btn btn-primary">{editId ? 'Update' : 'Tambah'}</button>
+            {editId && <button type="button" className="btn btn-secondary" onClick={resetForm}>Batal</button>}
           </div>
         </form>
       </div>
@@ -70,7 +87,10 @@ export default function ContentsPage() {
                   <td><span className="badge badge-online">{tipeLabel[c.tipe] || c.tipe}</span></td>
                   <td style={{ maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', color: '#86868b' }}>{c.payload}</td>
                   <td style={{ color: '#86868b' }}>{new Date(c.created_at).toLocaleDateString()}</td>
-                  <td><button className="btn btn-danger btn-small" onClick={() => handleDelete(c.id)}>Hapus</button></td>
+                  <td style={{ display: 'flex', gap: 6 }}>
+                    <button className="btn btn-secondary btn-small" onClick={() => handleEdit(c)}>Edit</button>
+                    <button className="btn btn-danger btn-small" onClick={() => handleDelete(c.id)}>Hapus</button>
+                  </td>
                 </tr>
               ))}
             </tbody>
