@@ -30,16 +30,41 @@ export default function PlaylistPage() {
   }, []);
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:3001');
-    ws.onmessage = (e) => {
-      const msg = JSON.parse(e.data);
-      if (msg.type === 'device_online' || msg.type === 'device_offline' || msg.type === 'device_deleted') {
-        api.getDevices().then(setDevices).catch(console.error);
-      } else if (msg.type === 'content_pushed') {
-        api.getPlaylists().then(setPlaylists).catch(console.error);
-      }
+    let ws: WebSocket | null = null;
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
+    let retryCount = 0;
+
+    const connect = () => {
+      ws = new WebSocket('ws://localhost:3001');
+
+      ws.onopen = () => { retryCount = 0; };
+
+      ws.onclose = () => {
+        ws = null;
+        const delay = Math.min(1000 * Math.pow(2, retryCount), 30000);
+        retryCount++;
+        retryTimer = setTimeout(connect, delay);
+      };
+
+      ws.onerror = () => { ws?.close(); };
+
+      ws.onmessage = (e) => {
+        try {
+          const msg = JSON.parse(e.data);
+          if (msg.type === 'device_online' || msg.type === 'device_offline' || msg.type === 'device_deleted') {
+            api.getDevices().then(setDevices).catch(console.error);
+          } else if (msg.type === 'content_pushed') {
+            api.getPlaylists().then(setPlaylists).catch(console.error);
+          }
+        } catch {}
+      };
     };
-    return () => ws.close();
+
+    connect();
+    return () => {
+      if (retryTimer) clearTimeout(retryTimer);
+      if (ws) { ws.onclose = null; ws.close(); ws = null; }
+    };
   }, []);
 
   const filteredDevices = useMemo(() => {

@@ -76,7 +76,9 @@ export function broadcast(data) {
   const message = JSON.stringify(data);
   wss.clients.forEach((client) => {
     if (client.readyState === 1) {
-      client.send(message);
+      try { client.send(message); } catch (err) {
+        console.error('Broadcast send error:', err.message);
+      }
     }
   });
 }

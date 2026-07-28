@@ -31,21 +31,46 @@ export default function Overview() {
   }, []);
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:3001');
-    ws.onmessage = (e) => {
-      const msg = JSON.parse(e.data);
-      if (msg.type === 'device_online')
-        setDevices((prev) => prev.map((d) => d.id === msg.deviceId ? { ...d, status: 'online' } : d));
-      else if (msg.type === 'device_offline')
-        setDevices((prev) => prev.map((d) => d.id === msg.deviceId ? { ...d, status: 'offline' } : d));
-      else if (msg.type === 'device_deleted')
-        setDevices((prev) => prev.filter((d) => d.id !== msg.deviceId));
-      else if (msg.type === 'device_added' && msg.device)
-        setDevices((prev) => [...prev, msg.device]);
-      else if (msg.type === 'content_added' || msg.type === 'content_deleted')
-        api.getContents().then(setContents).catch(console.error);
+    let ws: WebSocket | null = null;
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
+    let retryCount = 0;
+
+    const connect = () => {
+      ws = new WebSocket('ws://localhost:3001');
+
+      ws.onopen = () => { retryCount = 0; };
+
+      ws.onclose = () => {
+        ws = null;
+        const delay = Math.min(1000 * Math.pow(2, retryCount), 30000);
+        retryCount++;
+        retryTimer = setTimeout(connect, delay);
+      };
+
+      ws.onerror = () => { ws?.close(); };
+
+      ws.onmessage = (e) => {
+        try {
+          const msg = JSON.parse(e.data);
+          if (msg.type === 'device_online')
+            setDevices((prev) => prev.map((d) => d.id === msg.deviceId ? { ...d, status: 'online' } : d));
+          else if (msg.type === 'device_offline')
+            setDevices((prev) => prev.map((d) => d.id === msg.deviceId ? { ...d, status: 'offline' } : d));
+          else if (msg.type === 'device_deleted')
+            setDevices((prev) => prev.filter((d) => d.id !== msg.deviceId));
+          else if (msg.type === 'device_added' && msg.device)
+            setDevices((prev) => [...prev, msg.device]);
+          else if (msg.type === 'content_added' || msg.type === 'content_deleted')
+            api.getContents().then(setContents).catch(console.error);
+        } catch {}
+      };
     };
-    return () => ws.close();
+
+    connect();
+    return () => {
+      if (retryTimer) clearTimeout(retryTimer);
+      if (ws) { ws.onclose = null; ws.close(); ws = null; }
+    };
   }, []);
 
   const online = devices.filter((d) => d.status === 'online').length;
@@ -74,10 +99,9 @@ export default function Overview() {
     const year = Number(yearFilter);
     const months: { label: string; count: number }[] = [];
     for (let i = 0; i < 12; i++) {
-      const d = new Date(year, i, 1);
       const label = monthNames[i];
-      const count = contents.filter((c) => {
-        const cd = new Date(c.created_at);
+      const count = devices.filter((d) => {
+        const cd = new Date(d.last_seen || Date.now());
         return cd.getFullYear() === year && cd.getMonth() === i;
       }).length;
       months.push({ label, count });

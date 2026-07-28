@@ -21,21 +21,46 @@ export default function DevicesPage() {
   }, []);
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:3001');
-    ws.onmessage = (e) => {
-      const msg = JSON.parse(e.data);
-      if (msg.type === 'device_online')
-        setDevices((prev) => prev.map((d) => d.id === msg.deviceId ? { ...d, status: 'online' } : d));
-      else if (msg.type === 'device_offline')
-        setDevices((prev) => prev.map((d) => d.id === msg.deviceId ? { ...d, status: 'offline' } : d));
-      else if (msg.type === 'device_deleted')
-        setDevices((prev) => prev.filter((d) => d.id !== msg.deviceId));
-      else if (msg.type === 'device_added' && msg.device)
-        setDevices((prev) => [...prev, msg.device]);
-      else if (msg.type === 'device_updated' && msg.device)
-        setDevices((prev) => prev.map((d) => d.id === msg.device.id ? msg.device : d));
+    let ws: WebSocket | null = null;
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
+    let retryCount = 0;
+
+    const connect = () => {
+      ws = new WebSocket('ws://localhost:3001');
+
+      ws.onopen = () => { retryCount = 0; };
+
+      ws.onclose = () => {
+        ws = null;
+        const delay = Math.min(1000 * Math.pow(2, retryCount), 30000);
+        retryCount++;
+        retryTimer = setTimeout(connect, delay);
+      };
+
+      ws.onerror = () => { ws?.close(); };
+
+      ws.onmessage = (e) => {
+        try {
+          const msg = JSON.parse(e.data);
+          if (msg.type === 'device_online')
+            setDevices((prev) => prev.map((d) => d.id === msg.deviceId ? { ...d, status: 'online' } : d));
+          else if (msg.type === 'device_offline')
+            setDevices((prev) => prev.map((d) => d.id === msg.deviceId ? { ...d, status: 'offline' } : d));
+          else if (msg.type === 'device_deleted')
+            setDevices((prev) => prev.filter((d) => d.id !== msg.deviceId));
+          else if (msg.type === 'device_added' && msg.device)
+            setDevices((prev) => [...prev, msg.device]);
+          else if (msg.type === 'device_updated' && msg.device)
+            setDevices((prev) => prev.map((d) => d.id === msg.device.id ? msg.device : d));
+        } catch {}
+      };
     };
-    return () => ws.close();
+
+    connect();
+    return () => {
+      if (retryTimer) clearTimeout(retryTimer);
+      if (ws) { ws.onclose = null; ws.close(); ws = null; }
+    };
   }, []);
 
   const filtered = useMemo(() => {

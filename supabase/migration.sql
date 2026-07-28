@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS devices (
   nama VARCHAR(255) NOT NULL,
   lokasi VARCHAR(255) DEFAULT '',
   status VARCHAR(20) DEFAULT 'offline' CHECK (status IN ('online', 'offline')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
   last_seen TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -56,6 +57,9 @@ CREATE TABLE IF NOT EXISTS users (
   password VARCHAR(255) NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Add created_at to devices for monthly trend chart
+ALTER TABLE devices ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
 
 -- Add filename column to contents for image original file name display
 ALTER TABLE contents ADD COLUMN IF NOT EXISTS filename text;
