@@ -8,6 +8,8 @@ interface Device { id: string; nama: string; lokasi: string; status: string; las
 export default function DevicesPage() {
   const [devices, setDevices] = useState<Device[]>([]);
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 10;
   const [modalOpen, setModalOpen] = useState(false);
   const [editId, setEditId] = useState('');
   const [form, setForm] = useState({ nama: '', lokasi: '' });
@@ -35,6 +37,10 @@ export default function DevicesPage() {
     const q = search.toLowerCase();
     return devices.filter((d) => d.nama.toLowerCase().includes(q) || d.lokasi.toLowerCase().includes(q));
   }, [devices, search]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const paginated = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
   const openAdd = () => {
     setEditId('');
@@ -98,7 +104,7 @@ export default function DevicesPage() {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#86868b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <input placeholder="Cari device..." value={search} onChange={(e) => setSearch(e.target.value)} />
+            <input placeholder="Cari device..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
           </div>
           <div className="toolbar-actions">
             <button className="btn btn-excel" onClick={exportExcel} title="Export Excel">
@@ -125,7 +131,7 @@ export default function DevicesPage() {
           <table>
             <thead><tr><th>Nama</th><th>Lokasi</th><th>Status</th><th>Last Seen</th><th>Aksi</th></tr></thead>
             <tbody>
-              {filtered.map((d) => (
+              {paginated.map((d) => (
                 <tr key={d.id}>
                   <td className="fw-600">{d.nama}</td>
                   <td>{d.lokasi}</td>
@@ -143,6 +149,19 @@ export default function DevicesPage() {
               ))}
             </tbody>
           </table>
+        )}
+        {totalPages > 1 && (
+          <div className="pagination">
+            <button className="btn-icon page-btn" disabled={safePage <= 1} onClick={() => setPage(safePage - 1)} title="Sebelumnya">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+              <button key={p} className={`page-btn ${p === safePage ? 'page-active' : ''}`} onClick={() => setPage(p)}>{p}</button>
+            ))}
+            <button className="btn-icon page-btn" disabled={safePage >= totalPages} onClick={() => setPage(safePage + 1)} title="Selanjutnya">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
         )}
       </div>
 
