@@ -79,11 +79,11 @@ export default function Overview() {
     const months: { label: string; count: number }[] = [];
     for (let i = 11; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
       const label = `${monthNames[d.getMonth()]} ${String(d.getFullYear()).slice(2)}`;
-      const count = contents.filter((c) => {
-        const cd = new Date(c.created_at);
-        return cd.getFullYear() === d.getFullYear() && cd.getMonth() === d.getMonth();
+      const count = devices.filter((dv) => {
+        if (!dv.last_seen) return false;
+        const dd = new Date(dv.last_seen);
+        return dd.getFullYear() === d.getFullYear() && dd.getMonth() === d.getMonth();
       }).length;
       months.push({ label, count });
     }
@@ -121,14 +121,14 @@ export default function Overview() {
           {contents.length > 0 && (
             <div className="card overview-card">
               <h3>Content Types</h3>
-              <div className="bar-chart-col">
+              <div className="bar-chart">
                 {contentTypes.map((t, i) => (
-                  <div key={t} className="bar-col">
-                    <span className="bar-col-value">{typeCounts[i]}</span>
-                    <div className="bar-col-track">
-                      <div className="bar-col-fill" style={{ height: `${(typeCounts[i] / maxType) * 100}%` }} />
+                  <div key={t} className="bar-row">
+                    <span className="bar-label">{typeLabel[t]}</span>
+                    <div className="bar-track">
+                      <div className="bar-fill" style={{ width: `${(typeCounts[i] / maxType) * 100}%` }} />
                     </div>
-                    <span className="bar-col-label">{typeLabel[t]}</span>
+                    <span className="bar-value">{typeCounts[i]}</span>
                   </div>
                 ))}
               </div>
