@@ -101,7 +101,7 @@ export default function PlaylistPage() {
           </div>
           <div className="toolbar-actions">
             <button className="btn btn-primary" onClick={() => openAddModal()}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6, verticalAlign: 'middle' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
               </svg>
               Tambah ke Playlist
@@ -191,7 +191,7 @@ export default function PlaylistPage() {
       )}
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Tambah ke Playlist">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div className="modal-form">
           <div className="modal-field">
             <label>Device</label>
             <select value={selectedDevice} onChange={(e) => setSelectedDevice(e.target.value)}>
@@ -206,7 +206,7 @@ export default function PlaylistPage() {
               {contents.map((c) => <option key={c.id} value={c.id}>{c.judul} ({tipeLabel[c.tipe] || c.tipe})</option>)}
             </select>
           </div>
-          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 8 }}>
+          <div className="modal-actions">
             <button type="button" className="btn btn-secondary" onClick={() => setModalOpen(false)}>Batal</button>
             <button className="btn btn-primary" onClick={addToPlaylist} disabled={!selectedDevice || !selectedContent}>Tambah</button>
           </div>

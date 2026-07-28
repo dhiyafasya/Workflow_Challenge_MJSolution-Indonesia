@@ -198,3 +198,19 @@
   height: auto;
   display: block;
 }
+
+.dot-online {
+  background: #34c759 !important;
+}
+
+.dot-offline {
+  background: #ff3b30 !important;
+}
+
+.donut-svg {
+  transform: rotate(-90deg);
+}
+
+.donut-fill {
+  transition: stroke-dashoffset 0.6s ease;
+}

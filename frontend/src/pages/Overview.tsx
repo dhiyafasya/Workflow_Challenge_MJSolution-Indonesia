@@ -221,8 +221,8 @@ function StatusBar({ online, offline, total }: { online: number; offline: number
         <div className="status-bar-fill offline" style={{ width: `${offlinePct}%` }} />
       </div>
       <div className="status-bar-legend">
-        <span><span className="legend-dot" style={{ background: '#34c759' }} /> Online ({online})</span>
-        <span><span className="legend-dot" style={{ background: '#ff3b30' }} /> Offline ({offline})</span>
+        <span><span className="legend-dot dot-online" /> Online ({online})</span>
+        <span><span className="legend-dot dot-offline" /> Offline ({offline})</span>
       </div>
     </div>
   );

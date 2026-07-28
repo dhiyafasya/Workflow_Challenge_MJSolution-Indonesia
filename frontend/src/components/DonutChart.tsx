@@ -18,7 +18,7 @@ export default function DonutChart({
   const offset = circ - (percentage / 100) * circ;
 
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: 'rotate(-90deg)' }}>
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="donut-svg">
       <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke={bgColor} strokeWidth={strokeWidth} />
       <circle
         cx={size / 2} cy={size / 2} r={radius}
@@ -26,7 +26,7 @@ export default function DonutChart({
         strokeLinecap="round"
         strokeDasharray={circ}
         strokeDashoffset={offset}
-        style={{ transition: 'stroke-dashoffset 0.6s ease' }}
+        className="donut-fill"
       />
     </svg>
   );

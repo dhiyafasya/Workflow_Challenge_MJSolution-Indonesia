@@ -572,3 +572,34 @@ tr:last-child td {
   display: flex;
   gap: 8px;
 }
+
+.btn-icon svg,
+.btn svg {
+  vertical-align: middle;
+}
+
+.btn-icon svg {
+  margin: 0;
+}
+
+.btn svg {
+  margin-right: 6px;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.search-hint {
+  font-weight: 400;
+  color: #86868b;
+}

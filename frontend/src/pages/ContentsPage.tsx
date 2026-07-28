@@ -81,7 +81,7 @@ export default function ContentsPage() {
           </div>
           <div className="toolbar-actions">
             <button className="btn btn-primary" onClick={openAdd}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6, verticalAlign: 'middle' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
               </svg>
               Tambah Content
@@ -91,7 +91,7 @@ export default function ContentsPage() {
       </div>
 
       <div className="card">
-        <h3>Daftar Content {search && <span style={{ fontWeight: 400, color: '#86868b' }}>— hasil untuk "{search}"</span>}</h3>
+        <h3>Daftar Content {search && <span className="search-hint">— hasil untuk "{search}"</span>}</h3>
         {filtered.length === 0 ? (
           <div className="empty-state"><p>{contents.length === 0 ? 'Belum ada content. Klik "Tambah Content" di atas.' : 'Content tidak ditemukan.'}</p></div>
         ) : (
@@ -134,7 +134,7 @@ export default function ContentsPage() {
       </div>
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editId ? 'Edit Content' : 'Tambah Content'}>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <form onSubmit={handleSubmit} className="modal-form">
           <div className="modal-field">
             <label>Judul</label>
             <input placeholder="Contoh: Promo Akhir Tahun" value={form.judul}
@@ -153,7 +153,7 @@ export default function ContentsPage() {
             <input placeholder="Contoh: https://..." value={form.payload}
               onChange={(e) => setForm({ ...form, payload: e.target.value })} required />
           </div>
-          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 8 }}>
+          <div className="modal-actions">
             <button type="button" className="btn btn-secondary" onClick={() => setModalOpen(false)}>Batal</button>
             <button type="submit" className="btn btn-primary">{editId ? 'Simpan' : 'Tambah'}</button>
           </div>

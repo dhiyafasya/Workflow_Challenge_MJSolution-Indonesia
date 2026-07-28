@@ -119,13 +119,13 @@ export default function DevicesPage() {
           </div>
           <div className="toolbar-actions">
             <button className="btn btn-excel" onClick={exportExcel} title="Export Excel">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6, verticalAlign: 'middle' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
               </svg>
               Export Excel
             </button>
             <button className="btn btn-primary" onClick={openAdd}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6, verticalAlign: 'middle' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
               </svg>
               Tambah Device
@@ -135,7 +135,7 @@ export default function DevicesPage() {
       </div>
 
       <div className="card">
-        <h3>Daftar Device {search && <span style={{ fontWeight: 400, color: '#86868b' }}>— hasil untuk "{search}"</span>}</h3>
+        <h3>Daftar Device {search && <span className="search-hint">— hasil untuk "{search}"</span>}</h3>
         {filtered.length === 0 ? (
           <div className="empty-state"><p>{devices.length === 0 ? 'Belum ada device. Klik "Tambah Device" di atas.' : 'Device tidak ditemukan.'}</p></div>
         ) : (
@@ -185,7 +185,7 @@ export default function DevicesPage() {
       </div>
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editId ? 'Edit Device' : 'Tambah Device'}>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <form onSubmit={handleSubmit} className="modal-form">
           <div className="modal-field">
             <label>Nama Device</label>
             <input placeholder="Contoh: TV-Lobi-01" value={form.nama}
@@ -196,7 +196,7 @@ export default function DevicesPage() {
             <input placeholder="Contoh: Lobby Lt.1" value={form.lokasi}
               onChange={(e) => setForm({ ...form, lokasi: e.target.value })} required />
           </div>
-          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 8 }}>
+          <div className="modal-actions">
             <button type="button" className="btn btn-secondary" onClick={() => setModalOpen(false)}>Batal</button>
             <button type="submit" className="btn btn-primary">{editId ? 'Simpan' : 'Tambah'}</button>
           </div>
