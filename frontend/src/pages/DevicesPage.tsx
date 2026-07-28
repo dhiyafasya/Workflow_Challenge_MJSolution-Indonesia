@@ -129,10 +129,11 @@ export default function DevicesPage() {
           <div className="empty-state"><p>{devices.length === 0 ? 'Belum ada device. Klik "Tambah Device" di atas.' : 'Device tidak ditemukan.'}</p></div>
         ) : (
           <table>
-            <thead><tr><th>Nama</th><th>Lokasi</th><th>Status</th><th>Last Seen</th><th>Aksi</th></tr></thead>
+            <thead><tr><th>No</th><th>Nama</th><th>Lokasi</th><th>Status</th><th>Last Seen</th><th>Aksi</th></tr></thead>
             <tbody>
-              {paginated.map((d) => (
+              {paginated.map((d, idx) => (
                 <tr key={d.id}>
+                  <td className="table-muted table-no">{(safePage - 1) * PAGE_SIZE + idx + 1}</td>
                   <td className="fw-600">{d.nama}</td>
                   <td>{d.lokasi}</td>
                   <td><span className={`badge ${d.status === 'online' ? 'badge-online' : 'badge-offline'}`}>{d.status}</span></td>
