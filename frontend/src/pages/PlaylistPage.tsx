@@ -19,6 +19,7 @@ export default function PlaylistPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState('');
   const [selectedContent, setSelectedContent] = useState('');
+  const [copiedId, setCopiedId] = useState('');
 
   useEffect(() => {
     api.getDevices().then(setDevices).catch(console.error);
@@ -66,6 +67,16 @@ export default function PlaylistPage() {
     } catch (err) { alert(err); }
   };
 
+  const copyUrl = (id: string) => {
+    const url = `http://localhost:5173/device/${id}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(''), 2000);
+    }).catch(() => {
+      prompt('Copy URL ini:', url);
+    });
+  };
+
   const pushContent = async (deviceId: string, contentId: string) => {
     try {
       await api.pushContent(deviceId, contentId);
@@ -111,6 +122,13 @@ export default function PlaylistPage() {
                 <div className="accordion-info">
                   <div className="accordion-title-row">
                     <span className="fw-600">{d.nama}</span>
+                    <button className="btn-icon btn-icon-copy" onClick={(e) => { e.stopPropagation(); copyUrl(d.id); }} title="Copy device URL">
+                      {copiedId === d.id ? (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      ) : (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#86868b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      )}
+                    </button>
                     <span className={`badge ${d.status === 'online' ? 'badge-online' : 'badge-offline'}`}>{d.status}</span>
                   </div>
                   <span className="accordion-subtitle">{d.lokasi} · {items.length} konten</span>

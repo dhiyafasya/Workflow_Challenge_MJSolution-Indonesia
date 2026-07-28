@@ -38,6 +38,24 @@
   background: #f9f9fb;
 }
 
+.btn-icon-copy {
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-icon-copy:hover {
+  background: #e8e8ed;
+}
+
 .accordion-expanded .accordion-header {
   border-bottom: 1px solid #f0f0f0;
 }
