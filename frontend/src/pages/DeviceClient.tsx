@@ -64,39 +64,37 @@ function DeviceView({ deviceId }: { deviceId: string }) {
     if (!currentContent) return null;
     switch (currentContent.tipe) {
       case 'url':
-        return <iframe src={currentContent.payload} style={{ width: '100%', height: '100%', border: 'none' }} title={currentContent.judul} />;
+        return <iframe src={currentContent.payload} className="dc-content-frame" title={currentContent.judul} />;
       case 'image':
-        return <img src={currentContent.payload} alt={currentContent.judul} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />;
+        return <img src={currentContent.payload} alt={currentContent.judul} className="dc-content-img" />;
       case 'text':
-        return <div style={{ fontSize: '3rem', textAlign: 'center', padding: 40 }}>{currentContent.payload}</div>;
+        return <div className="dc-content-text">{currentContent.payload}</div>;
       default:
         return <p>Unknown content type: {currentContent.tipe}</p>;
     }
   };
 
   return (
-    <div style={{ height: '100vh', width: '100vw', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#111', color: '#fff', position: 'relative' }}>
+    <div className="dc-fullscreen">
       {currentContent ? (
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{renderContent()}</div>
+        <div className="dc-center">{renderContent()}</div>
       ) : (
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ width: 80, height: 80, borderRadius: 20, background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+        <div className="dc-centered-col">
+          <div className="dc-icon-box">
             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
             </svg>
           </div>
-          <h1 style={{ fontWeight: 600, fontSize: 18, marginBottom: 8 }}>{deviceId}</h1>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 14px', borderRadius: 20, background: wsStatus === 'connected' ? 'rgba(46,125,50,0.2)' : 'rgba(198,40,40,0.2)', color: wsStatus === 'connected' ? '#81c784' : '#e57373', fontSize: 13, fontWeight: 500 }}>
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'currentColor' }} />
+          <h1 className="dc-device-id">{deviceId}</h1>
+          <div className={`dc-status-badge ${wsStatus === 'connected' ? 'connected' : 'disconnected'}`}>
+            <span className="dc-status-dot" />
             {wsStatus === 'connected' ? 'Connected' : wsStatus}
           </div>
-          {wsStatus === 'connected' && <p style={{ marginTop: 24, opacity: 0.3, fontSize: 14 }}>Menunggu konten dari server...</p>}
+          {wsStatus === 'connected' && <p className="dc-waiting">Menunggu konten dari server...</p>}
         </div>
       )}
       {wsStatus !== 'connected' && wsStatus !== 'connecting' && (
-        <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: '#c62828', color: '#fff', textAlign: 'center', padding: 8, fontSize: 13, zIndex: 9999 }}>
-          WebSocket disconnected — mencoba reconnect...
-        </div>
+        <div className="dc-disconnected-bar">WebSocket disconnected — mencoba reconnect...</div>
       )}
     </div>
   );
@@ -125,40 +123,28 @@ export default function DeviceClient() {
   }
 
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#111', color: '#fff', gap: 20, padding: 20 }}>
-      <h1 style={{ fontSize: 24, fontWeight: 700 }}>Device Client</h1>
-      <p style={{ opacity: 0.5, fontSize: 14 }}>Pilih device yang akan menampilkan konten:</p>
+    <div className="dc-picker">
+      <h1 className="dc-picker-title">Device Client</h1>
+      <p className="dc-picker-desc">Pilih device yang akan menampilkan konten:</p>
 
-      <div style={{ display: 'flex', gap: 10, width: '100%', maxWidth: 400 }}>
+      <div className="dc-input-row">
         <input value={inputId} onChange={(e) => setInputId(e.target.value)}
-          placeholder="Atau masukkan Device ID manual"
-          style={{ flex: 1, padding: '12px 16px', borderRadius: 8, border: 'none', fontSize: 14 }} />
-        <button onClick={() => inputId && navigate(`/device/${inputId}`)}
-          style={{ padding: '12px 20px', borderRadius: 8, border: 'none', background: '#007aff', color: '#fff', fontWeight: 600, cursor: 'pointer' }}>
-          Connect
-        </button>
+          placeholder="Atau masukkan Device ID manual" />
+        <button onClick={() => inputId && navigate(`/device/${inputId}`)}>Connect</button>
       </div>
 
       {!token ? (
-        <p style={{ opacity: 0.4, fontSize: 13 }}>Login dulu di dashboard untuk lihat daftar device</p>
+        <p className="dc-muted">Login dulu di dashboard untuk lihat daftar device</p>
       ) : loading ? (
-        <p style={{ opacity: 0.4, fontSize: 13 }}>Loading...</p>
+        <p className="dc-muted">Loading...</p>
       ) : devices.length === 0 ? (
-        <p style={{ opacity: 0.4, fontSize: 13 }}>Belum ada device. Buat device di dashboard dulu.</p>
+        <p className="dc-muted">Belum ada device. Buat device di dashboard dulu.</p>
       ) : (
-        <div style={{ width: '100%', maxWidth: 400, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div className="dc-device-list">
           {devices.map((d) => (
-            <button key={d.id} onClick={() => navigate(`/device/${d.id}`)}
-              style={{
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                padding: '14px 18px', borderRadius: 10, border: '1px solid rgba(255,255,255,0.1)',
-                background: 'rgba(255,255,255,0.05)', color: '#fff', cursor: 'pointer',
-                fontSize: 14, width: '100%', textAlign: 'left', transition: 'background 0.2s',
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
-              onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}>
-              <span><strong>{d.nama}</strong> <span style={{ opacity: 0.4 }}>— {d.lokasi}</span></span>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: d.status === 'online' ? '#4caf50' : '#666', flexShrink: 0 }} />
+            <button key={d.id} onClick={() => navigate(`/device/${d.id}`)} className="dc-device-btn">
+              <span className="dc-device-name"><strong>{d.nama}</strong> <span className="dc-device-loc">— {d.lokasi}</span></span>
+              <span className={d.status === 'online' ? 'dc-status-dot-online' : 'dc-status-dot-offline'} />
             </button>
           ))}
         </div>

@@ -83,11 +83,11 @@ export default function ContentsPage() {
             <tbody>
               {contents.map((c) => (
                 <tr key={c.id}>
-                  <td style={{ fontWeight: 600 }}>{c.judul}</td>
+                  <td className="fw-600">{c.judul}</td>
                   <td><span className="badge badge-online">{tipeLabel[c.tipe] || c.tipe}</span></td>
-                  <td style={{ maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', color: '#86868b' }}>{c.payload}</td>
-                  <td style={{ color: '#86868b' }}>{new Date(c.created_at).toLocaleDateString()}</td>
-                  <td style={{ display: 'flex', gap: 6 }}>
+                  <td className="content-payload">{c.payload}</td>
+                  <td className="table-muted">{new Date(c.created_at).toLocaleDateString()}</td>
+                  <td className="actions-cell">
                     <button className="btn-icon" onClick={() => handleEdit(c)} title="Edit">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#007aff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                     </button>

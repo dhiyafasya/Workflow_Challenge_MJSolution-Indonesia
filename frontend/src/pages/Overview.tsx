@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { api } from '../api';
 
 interface Device { id: string; nama: string; lokasi: string; status: string; last_seen: string | null; }
@@ -35,22 +35,22 @@ export default function Overview() {
         <p>Ringkasan sistem signage Anda</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 32 }}>
-        <div className="card" style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 36, fontWeight: 700, color: '#007aff' }}>{devices.length}</div>
-          <div style={{ fontSize: 13, color: '#86868b', marginTop: 4 }}>Total Devices</div>
+      <div className="stats-grid">
+        <div className="card stat-card">
+          <div className="stat-value blue">{devices.length}</div>
+          <div className="stat-label">Total Devices</div>
         </div>
-        <div className="card" style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 36, fontWeight: 700, color: '#2e7d32' }}>{online}</div>
-          <div style={{ fontSize: 13, color: '#86868b', marginTop: 4 }}>Online</div>
+        <div className="card stat-card">
+          <div className="stat-value green">{online}</div>
+          <div className="stat-label">Online</div>
         </div>
-        <div className="card" style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 36, fontWeight: 700, color: '#c62828' }}>{offline}</div>
-          <div style={{ fontSize: 13, color: '#86868b', marginTop: 4 }}>Offline</div>
+        <div className="card stat-card">
+          <div className="stat-value red">{offline}</div>
+          <div className="stat-label">Offline</div>
         </div>
-        <div className="card" style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 36, fontWeight: 700, color: '#007aff' }}>{contents.length}</div>
-          <div style={{ fontSize: 13, color: '#86868b', marginTop: 4 }}>Total Contents</div>
+        <div className="card stat-card">
+          <div className="stat-value blue">{contents.length}</div>
+          <div className="stat-label">Total Contents</div>
         </div>
       </div>
 
@@ -64,10 +64,10 @@ export default function Overview() {
             <tbody>
               {devices.slice(0, 5).map((d) => (
                 <tr key={d.id}>
-                  <td style={{ fontWeight: 600 }}>{d.nama}</td>
+                  <td className="table-name">{d.nama}</td>
                   <td>{d.lokasi}</td>
                   <td><span className={`badge ${d.status === 'online' ? 'badge-online' : 'badge-offline'}`}>{d.status}</span></td>
-                  <td style={{ color: '#86868b' }}>{d.last_seen ? new Date(d.last_seen).toLocaleString() : '-'}</td>
+                  <td className="table-muted">{d.last_seen ? new Date(d.last_seen).toLocaleString() : '-'}</td>
                 </tr>
               ))}
             </tbody>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { api } from '../api';
 
 interface Device { id: string; nama: string; lokasi: string; status: string; last_seen: string | null; }
@@ -84,7 +84,7 @@ export default function DevicesPage() {
             <tbody>
               {devices.map((d) => (
                 <tr key={d.id}>
-                  <td style={{ fontWeight: 600 }}>{d.nama}</td>
+                  <td className="fw-600">{d.nama}</td>
                   <td>{d.lokasi}</td>
                   <td><span className={`badge ${d.status === 'online' ? 'badge-online' : 'badge-offline'}`}>{d.status}</span></td>
                   <td>

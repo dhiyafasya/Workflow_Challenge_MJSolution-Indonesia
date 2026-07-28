@@ -1,0 +1,11 @@
+.content-payload {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #86868b;
+}
+
+.actions-cell {
+  display: flex;
+  gap: 6px;
+}

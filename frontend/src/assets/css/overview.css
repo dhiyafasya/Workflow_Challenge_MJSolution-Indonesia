@@ -1,0 +1,33 @@
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.stat-value.blue { color: #007aff; }
+.stat-value.green { color: #2e7d32; }
+.stat-value.red { color: #c62828; }
+
+.stat-label {
+  font-size: 13px;
+  color: #86868b;
+  margin-top: 4px;
+}
+
+.table-name {
+  font-weight: 600;
+}
+
+.table-muted {
+  color: #86868b;
+}

@@ -1,0 +1,17 @@
+.badge-ml {
+  margin-left: 8px;
+}
+
+.order-num {
+  color: #86868b;
+}
+
+.content-name {
+  font-weight: 600;
+}
+
+.playlist-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}

@@ -36,7 +36,7 @@ export default function PlaylistPage() {
 
   const pushContent = async (deviceId: string, contentId: string) => {
     try {
-      const res = await api.pushContent(deviceId, contentId);
+      await api.pushContent(deviceId, contentId);
       alert('Content berhasil di-push!');
     } catch (err) { alert(err); }
   };
@@ -79,7 +79,7 @@ export default function PlaylistPage() {
             <div className="card" key={d.id}>
               <h3>
                 {d.nama}
-                <span className={`badge ${d.status === 'online' ? 'badge-online' : 'badge-offline'}`} style={{ marginLeft: 8 }}>
+                <span className={`badge ${d.status === 'online' ? 'badge-online' : 'badge-offline'} badge-ml`}>
                   {d.status}
                 </span>
               </h3>
@@ -91,16 +91,18 @@ export default function PlaylistPage() {
                   <tbody>
                     {items.map((p) => (
                       <tr key={p.id}>
-                        <td style={{ color: '#86868b' }}>{p.urutan + 1}</td>
-                        <td style={{ fontWeight: 600 }}>{p.contents?.judul || '-'}</td>
+                        <td className="order-num">{p.urutan + 1}</td>
+                        <td className="content-name">{p.contents?.judul || '-'}</td>
                         <td>{p.contents?.tipe || '-'}</td>
                         <td>
-                          <button className="btn-icon btn-icon-primary" onClick={() => pushContent(d.id, p.content_id)} title="Push to device" style={{ marginRight: 6 }}>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#007aff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                          </button>
-                          <button className="btn-icon btn-icon-danger" onClick={() => removeFromPlaylist(p.id)} title="Hapus dari playlist">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff3b30" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                          </button>
+                          <div className="playlist-actions">
+                            <button className="btn-icon btn-icon-primary" onClick={() => pushContent(d.id, p.content_id)} title="Push to device">
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#007aff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                            </button>
+                            <button className="btn-icon btn-icon-danger" onClick={() => removeFromPlaylist(p.id)} title="Hapus dari playlist">
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff3b30" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}

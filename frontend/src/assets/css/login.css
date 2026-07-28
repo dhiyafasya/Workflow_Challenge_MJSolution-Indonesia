@@ -1,0 +1,146 @@
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0f3460 0%, #16213e 50%, #1a1a2e 100%);
+}
+
+.login-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 40px;
+  width: 400px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.login-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: #16213e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+}
+
+.login-title {
+  font-size: 22px;
+  color: #16213e;
+  margin-bottom: 4px;
+  font-weight: 700;
+}
+
+.login-subtitle {
+  color: #86868b;
+  font-size: 13px;
+}
+
+.login-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 24px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #e8e8ed;
+  background: #f5f5f7;
+}
+
+.login-tab {
+  flex: 1;
+  padding: 10px 0;
+  cursor: pointer;
+  border: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.login-tab.active {
+  background: #16213e;
+  color: #fff;
+  border-radius: 9px;
+}
+
+.login-tab.inactive {
+  background: transparent;
+  color: #86868b;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-field label {
+  display: block;
+  margin-bottom: 6px;
+  color: #555;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.login-field input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d2d2d7;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.login-field input:focus {
+  border-color: #007aff;
+}
+
+.login-success {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.login-error {
+  color: #ff3b30;
+  font-size: 14px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.login-submit {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  transition: all 0.2s;
+}
+
+.login-submit.active {
+  background: #16213e;
+  cursor: pointer;
+}
+
+.login-submit.loading {
+  background: #a0a0a0;
+  cursor: not-allowed;
+}
+
+.login-submit:hover.active {
+  background: #0f3460;
+}
