@@ -5,6 +5,12 @@ import { supabase } from '../db.js';
 
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'default_secret_change_me';
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'lax',
+  maxAge: 24 * 60 * 60 * 1000,
+};
 
 router.post('/register', async (req, res) => {
   const { email, password } = req.body;
@@ -41,20 +47,40 @@ router.post('/login', async (req, res) => {
   if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
 
   const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '24h' });
-  res.json({ token, user: { id: user.id, email: user.email } });
+  res.cookie('token', token, COOKIE_OPTIONS);
+  res.json({ user: { id: user.id, email: user.email } });
+});
+
+router.get('/me', (req, res) => {
+  const token = req.cookies?.token;
+  if (!token) return res.status(401).json({ error: 'Not authenticated' });
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    res.json({ user: { id: decoded.id, email: decoded.email } });
+  } catch {
+    res.clearCookie('token');
+    res.status(401).json({ error: 'Invalid token' });
+  }
+});
+
+router.post('/logout', (req, res) => {
+  res.clearCookie('token');
+  res.json({ message: 'Logged out' });
 });
 
 export function authenticate(req, res, next) {
-  const header = req.headers.authorization;
-  if (!header || !header.startsWith('Bearer ')) {
+  const token = req.cookies?.token;
+  if (!token) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
   try {
-    const decoded = jwt.verify(header.split(' ')[1], JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;
     next();
   } catch {
+    res.clearCookie('token');
     res.status(401).json({ error: 'Invalid token' });
   }
 }

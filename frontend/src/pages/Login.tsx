@@ -37,6 +37,7 @@ export default function Login({ onLogin }: Props) {
         }
         const regRes = await fetch('http://localhost:3001/api/auth/register', {
           method: 'POST',
+          credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),
         });
@@ -51,14 +52,14 @@ export default function Login({ onLogin }: Props) {
 
       const res = await fetch('http://localhost:3001/api/auth/login', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      localStorage.setItem('token', data.token);
-      onLogin(data.token);
+      onLogin();
     } catch (err: any) {
       setError(err.message);
     } finally {

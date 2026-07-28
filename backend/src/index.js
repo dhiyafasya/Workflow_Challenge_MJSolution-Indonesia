@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import http from 'http';
+import cookieParser from 'cookie-parser';
 import { initWebSocket } from './websocket.js';
 import devicesRouter from './routes/devices.js';
 import contentsRouter from './routes/contents.js';
@@ -13,8 +14,9 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-app.use(cors());
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use(express.json());
+app.use(cookieParser());
 
 app.use('/api/auth', authRouter);
 

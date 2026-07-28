@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Overview from './pages/Overview';
@@ -8,16 +8,15 @@ import PlaylistPage from './pages/PlaylistPage';
 import DeviceClient from './pages/DeviceClient';
 import Login from './pages/Login';
 
-function AdminLayout({ children }: { children: React.ReactNode }) {
+function AdminLayout({ children, onLogout }: { children: React.ReactNode; onLogout: () => void }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [, setToken] = useState(localStorage.getItem('token') || '');
 
   return (
     <div className="layout">
       <Sidebar
         collapsed={!sidebarOpen}
         onToggle={() => setSidebarOpen((prev) => !prev)}
-        onLogout={() => { localStorage.removeItem('token'); setToken(''); window.location.reload(); }}
+        onLogout={onLogout}
       />
       <main className="main-content">{children}</main>
     </div>
@@ -25,9 +24,22 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
 }
 
 function App() {
-  const [token, setToken] = useState(localStorage.getItem('token') || '');
+  const [authenticated, setAuthenticated] = useState<boolean | null>(null);
 
-  if (!token) return <Login onLogin={setToken} />;
+  useEffect(() => {
+    fetch('http://localhost:3001/api/auth/me', { credentials: 'include' })
+      .then((res) => setAuthenticated(res.ok))
+      .catch(() => setAuthenticated(false));
+  }, []);
+
+  if (authenticated === null) return null;
+
+  if (!authenticated) return <Login onLogin={() => setAuthenticated(true)} />;
+
+  const handleLogout = async () => {
+    await fetch('http://localhost:3001/api/auth/logout', { method: 'POST', credentials: 'include' });
+    setAuthenticated(false);
+  };
 
   return (
     <BrowserRouter>
@@ -35,7 +47,7 @@ function App() {
         <Route path="/device" element={<DeviceClient />} />
         <Route path="/device/:id" element={<DeviceClient />} />
         <Route path="/*" element={
-          <AdminLayout>
+          <AdminLayout onLogout={handleLogout}>
             <Routes>
               <Route path="/" element={<Overview />} />
               <Route path="/devices" element={<DevicesPage />} />
