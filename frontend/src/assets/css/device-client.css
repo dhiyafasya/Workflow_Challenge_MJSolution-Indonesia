@@ -109,6 +109,13 @@
   padding: 40px;
 }
 
+.dc-error-msg {
+  color: #e57373;
+  font-size: 18px;
+  text-align: center;
+  padding: 20px;
+}
+
 .dc-picker {
   height: 100vh;
   display: flex;

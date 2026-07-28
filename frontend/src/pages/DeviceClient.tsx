@@ -55,6 +55,7 @@ function DeviceView({ deviceId }: { deviceId: string }) {
       try {
         const msg = JSON.parse(e.data);
         if (msg.type === 'push_content' && msg.content) {
+          console.log('📦 Content received:', msg.content);
           setCurrentContent(msg.content);
         }
       } catch {}
@@ -82,7 +83,8 @@ function DeviceView({ deviceId }: { deviceId: string }) {
       case 'url':
         return <iframe src={currentContent.payload} className="dc-content-frame" title={currentContent.judul} />;
       case 'image':
-        return currentContent.payload ? <img src={currentContent.payload} alt={currentContent.judul} className="dc-content-img" /> : null;
+        if (!currentContent.payload) return <p className="dc-error-msg">Payload gambar kosong</p>;
+        return <img src={currentContent.payload} alt={currentContent.judul} className="dc-content-img" />;
       case 'text':
         return <div className="dc-content-text">{currentContent.payload}</div>;
       default:
