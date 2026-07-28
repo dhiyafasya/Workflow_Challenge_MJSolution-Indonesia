@@ -188,6 +188,7 @@ function LineChart({ data, max }: { data: { label: string; count: number }[]; ma
   }));
 
   const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ');
+  const areaPath = `${linePath} L${points[points.length - 1].x},${pad.top + innerH} L${points[0].x},${pad.top + innerH} Z`;
 
   return (
     <div className="line-chart-wrap">
@@ -196,12 +197,13 @@ function LineChart({ data, max }: { data: { label: string; count: number }[]; ma
         {[0.25, 0.5, 0.75, 1].map((r) => (
           <line key={r} x1={pad.left} y1={pad.top + innerH * (1 - r)} x2={pad.left + innerW} y2={pad.top + innerH * (1 - r)} stroke="#f5f5f7" strokeWidth="1" />
         ))}
-        <path d={linePath} fill="none" stroke="#007aff" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+        <path d={areaPath} fill="rgba(52,199,89,0.12)" />
+        <path d={linePath} fill="none" stroke="rgba(52,199,89,0.6)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
         {points.map((p, i) => (
           <g key={i}>
-            <circle cx={p.x} cy={p.y} r="4" fill="#007aff" stroke="#fff" strokeWidth="2" />
-            <text x={p.x} y={pad.top + innerH + 18} textAnchor="middle" fontSize="10" fill="#86868b">{data[i].label}</text>
-            <text x={p.x} y={p.y - 10} textAnchor="middle" fontSize="11" fontWeight="600" fill="#1d1d1f">{data[i].count}</text>
+            <circle cx={p.x} cy={p.y} r="3" fill="rgba(52,199,89,0.6)" stroke="#fff" strokeWidth="2" />
+            <text x={p.x} y={pad.top + innerH + 16} textAnchor="middle" fontSize="9" fill="#86868b">{data[i].label}</text>
+            <text x={p.x} y={p.y - 8} textAnchor="middle" fontSize="10" fontWeight="600" fill="#1d1d1f">{data[i].count}</text>
           </g>
         ))}
       </svg>
