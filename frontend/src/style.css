@@ -19,7 +19,7 @@ input, select, button, textarea {
 
 .sidebar {
   width: 240px;
-  background: #1d1d1f;
+  background: linear-gradient(180deg, #16213e 0%, #0f3460 100%);
   color: #fff;
   padding: 0;
   display: flex;
@@ -28,24 +28,26 @@ input, select, button, textarea {
 }
 
 .sidebar-header {
-  padding: 24px 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding: 20px 20px 16px;
 }
 
 .sidebar-header h1 {
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: -0.3px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  color: #fff;
 }
 
 .sidebar-header p {
-  font-size: 12px;
-  color: rgba(255,255,255,0.5);
-  margin-top: 2px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 1px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
 }
 
 .sidebar-nav {
-  padding: 12px 0;
+  padding: 8px 10px;
   flex: 1;
 }
 
@@ -53,30 +55,38 @@ input, select, button, textarea {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 20px;
-  color: rgba(255,255,255,0.6);
+  padding: 10px 14px;
+  color: rgba(255,255,255,0.55);
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
-  transition: all 0.2s;
-  border-left: 3px solid transparent;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  margin-bottom: 2px;
 }
 
 .sidebar-nav a:hover {
   color: #fff;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.08);
 }
 
 .sidebar-nav a.active {
-  color: #fff;
-  background: rgba(255,255,255,0.08);
-  border-left-color: #007aff;
+  color: #16213e;
+  background: #fff;
+  font-weight: 600;
+}
+
+.sidebar-nav a.active .icon {
+  color: #16213e;
 }
 
 .sidebar-nav .icon {
-  font-size: 18px;
   width: 24px;
-  text-align: center;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .sidebar-footer {
