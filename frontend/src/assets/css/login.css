@@ -30,6 +30,8 @@
   margin: 0 auto 12px;
 }
 
+.login-logo svg { stroke: #fff; }
+
 .login-title {
   font-size: 22px;
   color: #16213e;

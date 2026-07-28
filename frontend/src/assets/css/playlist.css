@@ -38,6 +38,8 @@
   background: #f9f9fb;
 }
 
+.btn-icon-copy svg { stroke: #86868b; }
+
 .btn-icon-copy {
   width: 26px;
   height: 26px;

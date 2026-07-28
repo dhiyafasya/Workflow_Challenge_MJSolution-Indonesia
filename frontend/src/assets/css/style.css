@@ -578,6 +578,14 @@ tr:last-child td {
   vertical-align: middle;
 }
 
+.btn-icon svg { stroke: #007aff; }
+.btn-icon-danger svg { stroke: #ff3b30; }
+.btn-icon-check svg { stroke: #2e7d32; }
+.btn-primary svg { stroke: #fff; }
+.search-box svg { stroke: #86868b; }
+.accordion-chevron { stroke: #86868b; }
+.icon-check { stroke: #2e7d32; }
+
 .btn-icon svg {
   margin: 0;
 }

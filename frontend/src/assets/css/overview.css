@@ -142,6 +142,8 @@
   transition: width 0.6s ease;
 }
 
+.metric-icon-box svg { stroke: #fff; }
+
 .bar-value {
   width: 24px;
   font-size: 13px;
@@ -207,6 +209,11 @@
   background: #ff3b30 !important;
 }
 
+.line-chart-svg .grid-base { stroke: #e8e8ed; }
+.line-chart-svg .grid-line { stroke: #f5f5f7; }
+.chart-dot { stroke: #fff; }
+.chart-label { fill: #86868b; }
+.chart-value { fill: #1d1d1f; }
 .donut-svg {
   transform: rotate(-90deg);
 }
