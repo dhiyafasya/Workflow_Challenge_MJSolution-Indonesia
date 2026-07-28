@@ -507,9 +507,21 @@ tr:last-child td {
   transition: border-color 0.2s;
 }
 
-.modal-field input:focus {
+.modal-field input:focus,
+.modal-field select:focus {
   border-color: #007aff;
   box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
+}
+
+.modal-field select {
+  padding: 12px 14px;
+  border: 1px solid #d2d2d7;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  background: #fff;
+  cursor: pointer;
 }
 
 @keyframes fadeIn {
