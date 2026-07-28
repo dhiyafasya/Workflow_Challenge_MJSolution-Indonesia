@@ -8,7 +8,7 @@ const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'default_secret_change_me';
 const COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: true,
+  secure: process.env.NODE_ENV === 'production',
   sameSite: 'lax',
   maxAge: 24 * 60 * 60 * 1000,
 };

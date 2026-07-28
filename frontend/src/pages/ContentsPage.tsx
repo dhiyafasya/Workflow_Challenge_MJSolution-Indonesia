@@ -169,8 +169,9 @@ export default function ContentsPage() {
           </div>
           <div className="modal-field">
             <label>Payload / URL</label>
-            <input placeholder="Contoh: https://..." value={form.payload}
-              onChange={(e) => { setForm({ ...form, payload: e.target.value }); setPreview(''); }} required />
+            <input placeholder={form.tipe === 'image' ? '(diisi otomatis dari upload)' : 'Contoh: https://...'} value={form.payload}
+              onChange={(e) => { setForm({ ...form, payload: e.target.value }); setPreview(''); }} required
+              readOnly={form.tipe === 'image' && !!form.payload} />
             {form.tipe === 'image' && (
               <div className="upload-row">
                 <input type="file" accept="image/*" onChange={handleUpload} disabled={uploading} />
