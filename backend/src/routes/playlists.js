@@ -41,7 +41,24 @@ router.post('/', async (req, res) => {
 
   if (error) return res.status(500).json({ error: error.message });
   logActivity(req, 'create', 'playlist', data.id, { device_id, content_id });
-  res.status(201).json(data);
+
+  const { data: content } = await supabase
+    .from('contents')
+    .select('*')
+    .eq('id', content_id)
+    .single();
+
+  if (content) {
+    const sent = sendToDevice(device_id, { type: 'push_content', content });
+    if (sent) {
+      broadcast({ type: 'content_pushed', deviceId: device_id, content });
+      logActivity(req, 'push', 'playlist', device_id, { content_id, judul: content.judul });
+      res.status(201).json({ ...data, pushed: true });
+      return;
+    }
+  }
+
+  res.status(201).json({ ...data, pushed: false });
 });
 
 router.delete('/:id', async (req, res) => {

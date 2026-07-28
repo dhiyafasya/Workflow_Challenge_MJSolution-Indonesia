@@ -20,6 +20,7 @@ export default function PlaylistPage() {
   const [selectedDevice, setSelectedDevice] = useState('');
   const [selectedContent, setSelectedContent] = useState('');
   const [copiedId, setCopiedId] = useState('');
+  const [notif, setNotif] = useState('');
 
   useEffect(() => {
     api.getDevices().then(setDevices).catch(console.error);
@@ -53,10 +54,13 @@ export default function PlaylistPage() {
   const addToPlaylist = async () => {
     if (!selectedDevice || !selectedContent) return;
     try {
-      await api.addToPlaylist(selectedDevice, selectedContent);
+      const res = await api.addToPlaylist(selectedDevice, selectedContent);
       const updated = await api.getPlaylists();
       setPlaylists(updated);
       setModalOpen(false);
+      const msg = res.pushed ? 'Content berhasil di-push ke device!' : 'Device offline. Content tersimpan & akan tampil saat online.';
+      setNotif(msg);
+      setTimeout(() => setNotif(''), 3000);
     } catch (err) { alert(err); }
   };
 
@@ -90,6 +94,8 @@ export default function PlaylistPage() {
         <h2>Playlist & Push</h2>
         <p>Atur jadwal konten per device dan push secara real-time</p>
       </div>
+
+      {notif && <div className={`playlist-notif ${notif.includes('berhasil') ? 'notif-success' : 'notif-warn'}`}>{notif}</div>}
 
       <div className="card">
         <div className="devices-toolbar">
@@ -157,7 +163,7 @@ export default function PlaylistPage() {
                             <td><span className="badge badge-online">{tipeLabel[p.contents?.tipe] || p.contents?.tipe || '-'}</span></td>
                             <td>
                               <div className="playlist-actions">
-                                <button className="btn-icon btn-icon-primary" onClick={() => pushContent(d.id, p.content_id)} title="Push to device">
+                                <button className="btn-icon btn-icon-primary" onClick={() => pushContent(d.id, p.content_id)} title="Push Ulang">
                                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#007aff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                                 </button>
                                 <button className="btn-icon btn-icon-danger" onClick={() => removeFromPlaylist(p.id)} title="Hapus dari playlist">
