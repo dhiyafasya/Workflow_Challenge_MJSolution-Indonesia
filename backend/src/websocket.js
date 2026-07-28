@@ -1,4 +1,5 @@
 import { WebSocketServer } from 'ws';
+import { supabase } from './db.js';
 
 let wss = null;
 const clients = new Map();
@@ -14,13 +15,32 @@ export function initWebSocket(server) {
       clients.set(deviceId, ws);
       ws.deviceId = deviceId;
       console.log(`Device connected: ${deviceId}`);
+
+      supabase
+        .from('devices')
+        .update({ status: 'online', last_seen: new Date().toISOString() })
+        .eq('id', deviceId)
+        .then(({ error }) => {
+          if (error) console.error('Update device online error:', error.message);
+        });
+
+      broadcast({ type: 'device_online', deviceId });
     }
 
     ws.on('close', () => {
       if (ws.deviceId) {
         clients.delete(ws.deviceId);
-        broadcast({ type: 'device_offline', deviceId: ws.deviceId });
         console.log(`Device disconnected: ${ws.deviceId}`);
+
+        supabase
+          .from('devices')
+          .update({ status: 'offline' })
+          .eq('id', ws.deviceId)
+          .then(({ error }) => {
+            if (error) console.error('Update device offline error:', error.message);
+          });
+
+        broadcast({ type: 'device_offline', deviceId: ws.deviceId });
       }
     });
 

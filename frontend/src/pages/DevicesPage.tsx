@@ -6,6 +6,7 @@ interface Device { id: string; nama: string; lokasi: string; status: string; las
 export default function DevicesPage() {
   const [devices, setDevices] = useState<Device[]>([]);
   const [form, setForm] = useState({ nama: '', lokasi: '' });
+  const [copiedId, setCopiedId] = useState('');
 
   useEffect(() => {
     api.getDevices().then(setDevices).catch(console.error);
@@ -43,6 +44,16 @@ export default function DevicesPage() {
     } catch (err) { alert(err); }
   };
 
+  const copyUrl = (id: string) => {
+    const url = `http://localhost:5173/device/${id}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(''), 2000);
+    }).catch(() => {
+      prompt('Copy URL ini:', url);
+    });
+  };
+
   return (
     <>
       <div className="page-header">
@@ -69,14 +80,19 @@ export default function DevicesPage() {
           <div className="empty-state"><p>Belum ada device. Tambahkan device baru di atas.</p></div>
         ) : (
           <table>
-            <thead><tr><th>Nama</th><th>Lokasi</th><th>Status</th><th>Last Seen</th><th>Aksi</th></tr></thead>
+            <thead><tr><th>Nama</th><th>Lokasi</th><th>Status</th><th>Device URL</th><th>Aksi</th></tr></thead>
             <tbody>
               {devices.map((d) => (
                 <tr key={d.id}>
                   <td style={{ fontWeight: 600 }}>{d.nama}</td>
                   <td>{d.lokasi}</td>
                   <td><span className={`badge ${d.status === 'online' ? 'badge-online' : 'badge-offline'}`}>{d.status}</span></td>
-                  <td style={{ color: '#86868b' }}>{d.last_seen ? new Date(d.last_seen).toLocaleString() : '-'}</td>
+                  <td>
+                    <button className="btn btn-secondary btn-small" onClick={() => copyUrl(d.id)}
+                      title="Copy device URL">
+                      {copiedId === d.id ? 'Copied!' : 'Copy URL'}
+                    </button>
+                  </td>
                   <td><button className="btn btn-danger btn-small" onClick={() => handleDelete(d.id)}>Hapus</button></td>
                 </tr>
               ))}

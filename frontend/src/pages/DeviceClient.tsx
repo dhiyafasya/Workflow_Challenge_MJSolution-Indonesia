@@ -10,23 +10,20 @@ interface Content {
 
 export default function DeviceClient() {
   const { id } = useParams();
-  const deviceId = id || 'device-' + Math.random().toString(36).slice(2, 8);
+  const deviceId = id || '';
   const [wsStatus, setWsStatus] = useState('connecting');
   const [currentContent, setCurrentContent] = useState<Content | null>(null);
+  const [enterId, setEnterId] = useState('');
   const wsRef = useRef<WebSocket | null>(null);
   const retryRef = useRef(0);
 
   const connect = useCallback(() => {
+    if (!deviceId) return;
     const ws = new WebSocket(`ws://localhost:3001?deviceId=${deviceId}`);
 
     ws.onopen = () => {
       setWsStatus('connected');
       retryRef.current = 0;
-      fetch('http://localhost:3001/api/devices', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nama: deviceId, lokasi: 'Device Client' }),
-      }).catch(() => {});
     };
 
     ws.onclose = () => {
@@ -54,11 +51,33 @@ export default function DeviceClient() {
   }, [deviceId]);
 
   useEffect(() => {
+    if (!deviceId) return;
     connect();
     return () => {
       if (wsRef.current) wsRef.current.close();
     };
-  }, [connect]);
+  }, [connect, deviceId]);
+
+  if (!deviceId) {
+    return (
+      <div style={{
+        height: '100vh', display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        background: '#111', color: '#fff', gap: 16,
+      }}>
+        <h1>Device Client</h1>
+        <p>Masukkan ID device untuk memulai:</p>
+        <input value={enterId} onChange={(e) => setEnterId(e.target.value)}
+          placeholder="Masukkan Device ID"
+          style={{ padding: '12px 16px', borderRadius: 8, border: 'none', width: 300, fontSize: 16, textAlign: 'center' }} />
+        <button onClick={() => window.location.href = `/device/${enterId}`}
+          style={{ padding: '10px 32px', borderRadius: 8, border: 'none', background: '#007aff', color: '#fff', fontSize: 16, fontWeight: 600, cursor: 'pointer' }}>
+          Connect
+        </button>
+        <p style={{ opacity: 0.4, fontSize: 13, marginTop: 8 }}>Copy URL dari halaman Devices di dashboard</p>
+      </div>
+    );
+  }
 
   const renderContent = () => {
     if (!currentContent) return null;
@@ -97,20 +116,36 @@ export default function DeviceClient() {
           flex: 1, display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center',
         }}>
-          <h1>Device Client</h1>
-          <p>Device ID: <strong>{deviceId}</strong></p>
-          <p>WebSocket: <span style={{ color: wsStatus === 'connected' ? '#0f0' : '#f00' }}>{wsStatus}</span></p>
-          <p style={{ marginTop: 24, opacity: 0.5 }}>Menunggu konten dari server...</p>
+          <div style={{
+            width: 80, height: 80, borderRadius: 20, background: 'rgba(255,255,255,0.05)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16,
+          }}>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <h1 style={{ fontWeight: 600, fontSize: 20, marginBottom: 8 }}>{deviceId}</h1>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            padding: '4px 14px', borderRadius: 20,
+            background: wsStatus === 'connected' ? 'rgba(46,125,50,0.2)' : 'rgba(198,40,40,0.2)',
+            color: wsStatus === 'connected' ? '#81c784' : '#e57373',
+            fontSize: 13, fontWeight: 500,
+          }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'currentColor' }} />
+            {wsStatus === 'connected' ? 'Connected' : wsStatus}
+          </div>
+          <p style={{ marginTop: 24, opacity: 0.3, fontSize: 14 }}>Menunggu konten dari server...</p>
         </div>
       )}
 
-      {wsStatus !== 'connected' && (
+      {wsStatus !== 'connected' && wsStatus !== 'connecting' && (
         <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0,
-          background: '#e74c3c', color: '#fff',
-          textAlign: 'center', padding: 8, fontSize: 14, zIndex: 9999,
+          position: 'fixed', bottom: 0, left: 0, right: 0,
+          background: '#c62828', color: '#fff',
+          textAlign: 'center', padding: 8, fontSize: 13, zIndex: 9999,
         }}>
-          WebSocket {wsStatus} — mencoba reconnect...
+          WebSocket disconnected — mencoba reconnect...
         </div>
       )}
     </div>
