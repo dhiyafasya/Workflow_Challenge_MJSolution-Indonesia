@@ -95,10 +95,12 @@ export default function PlaylistPage() {
                         <td style={{ fontWeight: 600 }}>{p.contents?.judul || '-'}</td>
                         <td>{p.contents?.tipe || '-'}</td>
                         <td>
-                          <button className="btn btn-primary btn-small" style={{ marginRight: 6 }}
-                            onClick={() => pushContent(d.id, p.content_id)}>Push</button>
-                          <button className="btn btn-danger btn-small"
-                            onClick={() => removeFromPlaylist(p.id)}>Hapus</button>
+                          <button className="btn-icon btn-icon-primary" onClick={() => pushContent(d.id, p.content_id)} title="Push to device" style={{ marginRight: 6 }}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#007aff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                          </button>
+                          <button className="btn-icon btn-icon-danger" onClick={() => removeFromPlaylist(p.id)} title="Hapus dari playlist">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff3b30" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                          </button>
                         </td>
                       </tr>
                     ))}

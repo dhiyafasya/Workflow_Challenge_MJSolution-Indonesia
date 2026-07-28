@@ -88,8 +88,12 @@ export default function ContentsPage() {
                   <td style={{ maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', color: '#86868b' }}>{c.payload}</td>
                   <td style={{ color: '#86868b' }}>{new Date(c.created_at).toLocaleDateString()}</td>
                   <td style={{ display: 'flex', gap: 6 }}>
-                    <button className="btn btn-secondary btn-small" onClick={() => handleEdit(c)}>Edit</button>
-                    <button className="btn btn-danger btn-small" onClick={() => handleDelete(c.id)}>Hapus</button>
+                    <button className="btn-icon" onClick={() => handleEdit(c)} title="Edit">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#007aff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button className="btn-icon btn-icon-danger" onClick={() => handleDelete(c.id)} title="Hapus">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff3b30" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
                   </td>
                 </tr>
               ))}

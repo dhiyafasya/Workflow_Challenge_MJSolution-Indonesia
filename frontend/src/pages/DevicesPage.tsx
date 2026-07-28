@@ -88,12 +88,19 @@ export default function DevicesPage() {
                   <td>{d.lokasi}</td>
                   <td><span className={`badge ${d.status === 'online' ? 'badge-online' : 'badge-offline'}`}>{d.status}</span></td>
                   <td>
-                    <button className="btn btn-secondary btn-small" onClick={() => copyUrl(d.id)}
-                      title="Copy device URL">
-                      {copiedId === d.id ? 'Copied!' : 'Copy URL'}
+                    <button className="btn-icon" onClick={() => copyUrl(d.id)} title="Copy device URL">
+                      {copiedId === d.id ? (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      ) : (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#007aff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      )}
                     </button>
                   </td>
-                  <td><button className="btn btn-danger btn-small" onClick={() => handleDelete(d.id)}>Hapus</button></td>
+                  <td>
+                    <button className="btn-icon btn-icon-danger" onClick={() => handleDelete(d.id)} title="Hapus">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff3b30" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
