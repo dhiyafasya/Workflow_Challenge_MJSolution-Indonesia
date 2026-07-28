@@ -163,15 +163,38 @@
   width: 40px;
 }
 
+.trend-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.trend-year {
+  padding: 6px 12px;
+  border: 1px solid #d2d2d7;
+  border-radius: 8px;
+  font-size: 13px;
+  outline: none;
+  background: #fff;
+  cursor: pointer;
+  color: #1d1d1f;
+}
+
+.trend-year:focus {
+  border-color: #007aff;
+  box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
+}
+
 .line-chart-wrap {
   width: 100%;
   overflow-x: auto;
-  padding: 8px 0;
+  padding: 4px 0;
 }
 
 .line-chart-svg {
   width: 100%;
-  min-width: 400px;
+  min-width: 350px;
   height: auto;
   display: block;
 }

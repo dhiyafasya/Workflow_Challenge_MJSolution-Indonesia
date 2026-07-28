@@ -37,6 +37,7 @@ const cards = [
 export default function Overview() {
   const [devices, setDevices] = useState<Device[]>([]);
   const [contents, setContents] = useState<Content[]>([]);
+  const [selectedYear, setSelectedYear] = useState('');
 
   useEffect(() => {
     api.getDevices().then(setDevices).catch(console.error);
@@ -73,17 +74,19 @@ export default function Overview() {
   const maxType = Math.max(...typeCounts, 1);
   const typeLabel: Record<string, string> = { url: 'URL', text: 'Teks', image: 'Gambar' };
 
+  const availableYears = [...new Set(contents.map((c) => new Date(c.created_at).getFullYear()))].sort();
+  const yearFilter = selectedYear || (availableYears.length > 0 ? String(availableYears[availableYears.length - 1]) : String(new Date().getFullYear()));
+
   const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const monthlyData = (() => {
-    const now = new Date();
+    const year = Number(yearFilter);
     const months: { label: string; count: number }[] = [];
-    for (let i = 11; i >= 0; i--) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const label = `${monthNames[d.getMonth()]} ${String(d.getFullYear()).slice(2)}`;
-      const count = devices.filter((dv) => {
-        if (!dv.last_seen) return false;
-        const dd = new Date(dv.last_seen);
-        return dd.getFullYear() === d.getFullYear() && dd.getMonth() === d.getMonth();
+    for (let i = 0; i < 12; i++) {
+      const d = new Date(year, i, 1);
+      const label = monthNames[i];
+      const count = contents.filter((c) => {
+        const cd = new Date(c.created_at);
+        return cd.getFullYear() === year && cd.getMonth() === i;
       }).length;
       months.push({ label, count });
     }
@@ -138,11 +141,6 @@ export default function Overview() {
       )}
 
       <div className="card">
-        <h3>Monthly Trend</h3>
-        <LineChart data={monthlyData} max={maxMonthly} />
-      </div>
-
-      <div className="card">
         <h3>Recent Devices</h3>
         {devices.length === 0 ? (
           <div className="empty-state"><p>Belum ada device terdaftar</p></div>
@@ -162,13 +160,23 @@ export default function Overview() {
           </table>
         )}
       </div>
+
+      <div className="card">
+        <div className="trend-header">
+          <h3>Monthly Trend</h3>
+          <select className="trend-year" value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
+            {availableYears.map((y) => <option key={y} value={y}>{y}</option>)}
+          </select>
+        </div>
+        <LineChart data={monthlyData} max={maxMonthly} />
+      </div>
     </>
   );
 }
 
 function LineChart({ data, max }: { data: { label: string; count: number }[]; max: number }) {
-  const w = 700;
-  const h = 200;
+  const w = 600;
+  const h = 150;
   const pad = { top: 20, right: 20, bottom: 30, left: 30 };
   const innerW = w - pad.left - pad.right;
   const innerH = h - pad.top - pad.bottom;
