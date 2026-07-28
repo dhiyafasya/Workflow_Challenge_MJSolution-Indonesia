@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { supabase } from '../db.js';
 import { broadcast } from '../websocket.js';
+import { logActivity } from '../logActivity.js';
 
 const router = Router();
 
@@ -28,6 +29,7 @@ router.post('/', async (req, res) => {
 
   if (error) return res.status(500).json({ error: error.message });
   broadcast({ type: 'device_added', device: data });
+  await logActivity(req, 'create', 'device', data.id, { nama, lokasi });
   res.status(201).json(data);
 });
 
@@ -42,6 +44,7 @@ router.put('/:id', async (req, res) => {
 
   if (error) return res.status(500).json({ error: error.message });
   broadcast({ type: 'device_updated', device: data });
+  await logActivity(req, 'update', 'device', req.params.id, { nama, lokasi });
   res.json(data);
 });
 
@@ -49,6 +52,7 @@ router.delete('/:id', async (req, res) => {
   const { error } = await supabase.from('devices').delete().eq('id', req.params.id);
   if (error) return res.status(500).json({ error: error.message });
   broadcast({ type: 'device_deleted', deviceId: req.params.id });
+  await logActivity(req, 'delete', 'device', req.params.id);
   res.json({ message: 'Device deleted' });
 });
 

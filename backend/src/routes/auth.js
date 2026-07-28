@@ -2,6 +2,7 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { supabase } from '../db.js';
+import { logActivity } from '../logActivity.js';
 
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'default_secret_change_me';
@@ -28,6 +29,7 @@ router.post('/register', async (req, res) => {
     .single();
 
   if (error) return res.status(500).json({ error: error.message });
+  await logActivity(req, 'register', 'user', data.id, { email });
   res.status(201).json({ message: 'User registered' });
 });
 
@@ -48,6 +50,7 @@ router.post('/login', async (req, res) => {
 
   const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '24h' });
   res.cookie('token', token, COOKIE_OPTIONS);
+  await logActivity(req, 'login', 'user', user.id, { email });
   res.json({ user: { id: user.id, email: user.email } });
 });
 
@@ -66,6 +69,7 @@ router.get('/me', (req, res) => {
 
 router.post('/logout', (req, res) => {
   res.clearCookie('token');
+  logActivity(req, 'logout', 'user');
   res.json({ message: 'Logged out' });
 });
 

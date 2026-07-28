@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { supabase } from '../db.js';
 import { sendToDevice, broadcast } from '../websocket.js';
+import { logActivity } from '../logActivity.js';
 
 const router = Router();
 
@@ -39,12 +40,14 @@ router.post('/', async (req, res) => {
     .single();
 
   if (error) return res.status(500).json({ error: error.message });
+  await logActivity(req, 'create', 'playlist', data.id, { device_id, content_id });
   res.status(201).json(data);
 });
 
 router.delete('/:id', async (req, res) => {
   const { error } = await supabase.from('playlists').delete().eq('id', req.params.id);
   if (error) return res.status(500).json({ error: error.message });
+  await logActivity(req, 'delete', 'playlist', req.params.id);
   res.json({ message: 'Playlist item deleted' });
 });
 
@@ -70,6 +73,7 @@ router.post('/push/:deviceId', async (req, res) => {
   }
 
   broadcast({ type: 'content_pushed', deviceId: req.params.deviceId, content });
+  await logActivity(req, 'push', 'playlist', req.params.deviceId, { content_id, judul: content.judul });
   res.json({ message: 'Content pushed to device', content });
 });
 
