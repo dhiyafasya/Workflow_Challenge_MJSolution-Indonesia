@@ -29,7 +29,7 @@ router.post('/register', async (req, res) => {
     .single();
 
   if (error) return res.status(500).json({ error: error.message });
-  await logActivity(req, 'register', 'user', data.id, { email });
+  logActivity(req, 'register', 'user', data.id, { email }, email);
   res.status(201).json({ message: 'User registered' });
 });
 
@@ -50,7 +50,7 @@ router.post('/login', async (req, res) => {
 
   const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '24h' });
   res.cookie('token', token, COOKIE_OPTIONS);
-  await logActivity(req, 'login', 'user', user.id, { email });
+  logActivity(req, 'login', 'user', user.id, { email }, email);
   res.json({ user: { id: user.id, email: user.email } });
 });
 

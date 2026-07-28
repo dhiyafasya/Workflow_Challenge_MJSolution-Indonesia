@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
 
   if (error) return res.status(500).json({ error: error.message });
   broadcast({ type: 'content_added', content: data });
-  await logActivity(req, 'create', 'content', data.id, { judul, tipe });
+  logActivity(req, 'create', 'content', data.id, { judul, tipe });
   res.status(201).json(data);
 });
 
@@ -44,7 +44,7 @@ router.put('/:id', async (req, res) => {
 
   if (error) return res.status(500).json({ error: error.message });
   broadcast({ type: 'content_updated', content: data });
-  await logActivity(req, 'update', 'content', req.params.id, { judul, tipe });
+  logActivity(req, 'update', 'content', req.params.id, { judul, tipe });
   res.json(data);
 });
 
@@ -52,7 +52,7 @@ router.delete('/:id', async (req, res) => {
   const { error } = await supabase.from('contents').delete().eq('id', req.params.id);
   if (error) return res.status(500).json({ error: error.message });
   broadcast({ type: 'content_deleted', contentId: req.params.id });
-  await logActivity(req, 'delete', 'content', req.params.id);
+  logActivity(req, 'delete', 'content', req.params.id);
   res.json({ message: 'Content deleted' });
 });
 
