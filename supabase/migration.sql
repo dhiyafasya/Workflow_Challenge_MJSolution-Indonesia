@@ -57,6 +57,9 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Add filename column to contents for image original file name display
+ALTER TABLE contents ADD COLUMN IF NOT EXISTS filename text;
+
 -- Note: RLS not used on users table because we use custom JWT (not Supabase Auth)
 -- Passwords are hashed with bcrypt for security
 

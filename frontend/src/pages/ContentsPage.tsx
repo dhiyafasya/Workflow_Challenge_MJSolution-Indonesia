@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { api } from '../api';
 import Modal from '../components/Modal';
 
-interface Content { id: string; judul: string; tipe: string; payload: string; created_at: string; }
+interface Content { id: string; judul: string; tipe: string; payload: string; filename?: string; created_at: string; }
 
 export default function ContentsPage() {
   const [contents, setContents] = useState<Content[]>([]);
@@ -14,7 +14,7 @@ export default function ContentsPage() {
   const [editId, setEditId] = useState('');
   const [form, setForm] = useState({ judul: '', tipe: 'url', payload: '' });
   const [uploading, setUploading] = useState(false);
-  const [preview, setPreview] = useState('');
+  const [uploadedUrl, setUploadedUrl] = useState('');
 
   useEffect(() => {
     api.getContents().then(setContents).catch(console.error);
@@ -33,14 +33,14 @@ export default function ContentsPage() {
   const openAdd = () => {
     setEditId('');
     setForm({ judul: '', tipe: 'url', payload: '' });
-    setPreview('');
+    setUploadedUrl('');
     setModalOpen(true);
   };
 
   const openEdit = (c: Content) => {
     setEditId(c.id);
-    setForm({ judul: c.judul, tipe: c.tipe, payload: c.payload });
-    setPreview(c.tipe === 'image' ? c.payload : '');
+    setForm({ judul: c.judul, tipe: c.tipe, payload: c.filename || c.payload });
+    setUploadedUrl(c.tipe === 'image' ? c.payload : '');
     setModalOpen(true);
   };
 
@@ -56,19 +56,22 @@ export default function ContentsPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
-      setForm({ ...form, payload: data.url });
-      setPreview(data.url);
+      setForm({ ...form, payload: file.name });
+      setUploadedUrl(data.url);
     } catch (err: any) { alert(err.message); }
     finally { setUploading(false); }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const payload = form.tipe === 'image' && uploadedUrl ? uploadedUrl : form.payload;
+    const filename = form.tipe === 'image' && uploadedUrl ? form.payload : undefined;
+    const data = { ...form, payload, filename };
     try {
       if (editId) {
-        await api.updateContent(editId, form);
+        await api.updateContent(editId, data);
       } else {
-        await api.createContent(form);
+        await api.createContent(data);
       }
       const updated = await api.getContents();
       setContents(updated);
@@ -122,7 +125,7 @@ export default function ContentsPage() {
                   <td className="table-muted table-no">{(safePage - 1) * PAGE_SIZE + idx + 1}</td>
                   <td className="fw-600">{c.judul}</td>
                   <td><span className="badge badge-online">{tipeLabel[c.tipe] || c.tipe}</span></td>
-                  <td className="content-payload">{c.payload}</td>
+                  <td className="content-payload">{c.tipe === 'image' && c.filename ? c.filename : c.payload}</td>
                   <td className="table-muted">{new Date(c.created_at).toLocaleDateString()}</td>
                   <td className="actions-cell">
                     <button className="btn-icon" onClick={() => openEdit(c)} title="Edit">
@@ -169,14 +172,13 @@ export default function ContentsPage() {
           </div>
           <div className="modal-field">
             <label>Payload / URL</label>
-            <input placeholder={form.tipe === 'image' ? '(diisi otomatis dari upload)' : 'Contoh: https://...'} value={form.payload}
-              onChange={(e) => { setForm({ ...form, payload: e.target.value }); setPreview(''); }} required
-              readOnly={form.tipe === 'image' && !!form.payload} />
+            <input placeholder={form.tipe === 'image' ? '(nama file akan terisi otomatis)' : 'Contoh: https://...'} value={form.payload}
+              onChange={(e) => setForm({ ...form, payload: e.target.value })} required
+              disabled={form.tipe === 'image'} />
             {form.tipe === 'image' && (
               <div className="upload-row">
                 <input type="file" accept="image/*" onChange={handleUpload} disabled={uploading} />
                 {uploading && <span className="upload-status">Mengupload...</span>}
-                {preview && <img src={preview} className="upload-preview" alt="preview" />}
               </div>
             )}
           </div>

@@ -21,28 +21,37 @@ function DeviceView({ deviceId }: { deviceId: string }) {
   const [currentContent, setCurrentContent] = useState<Content | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const retryRef = useRef(0);
+  const mountedRef = useRef(true);
 
   const connect = useCallback(() => {
+    if (!mountedRef.current) return;
+    if (wsRef.current?.readyState === WebSocket.OPEN || wsRef.current?.readyState === WebSocket.CONNECTING) return;
+
     const ws = new WebSocket(`ws://localhost:3001?deviceId=${deviceId}`);
 
     ws.onopen = () => {
+      if (!mountedRef.current) { ws.close(); return; }
       setWsStatus('connected');
       retryRef.current = 0;
     };
 
     ws.onclose = () => {
+      wsRef.current = null;
+      if (!mountedRef.current) return;
       setWsStatus('disconnected');
       const delay = Math.min(1000 * Math.pow(2, retryRef.current), 30000);
       retryRef.current++;
-      setTimeout(connect, delay);
+      setTimeout(() => { if (mountedRef.current) connect(); }, delay);
     };
 
     ws.onerror = () => {
+      if (!mountedRef.current) return;
       setWsStatus('error');
       ws.close();
     };
 
     ws.onmessage = (e) => {
+      if (!mountedRef.current) return;
       try {
         const msg = JSON.parse(e.data);
         if (msg.type === 'push_content' && msg.content) {
@@ -55,9 +64,15 @@ function DeviceView({ deviceId }: { deviceId: string }) {
   }, [deviceId]);
 
   useEffect(() => {
+    mountedRef.current = true;
     connect();
     return () => {
-      if (wsRef.current) wsRef.current.close();
+      mountedRef.current = false;
+      if (wsRef.current) {
+        wsRef.current.onclose = null;
+        wsRef.current.close();
+        wsRef.current = null;
+      }
     };
   }, [connect]);
 
@@ -67,7 +82,7 @@ function DeviceView({ deviceId }: { deviceId: string }) {
       case 'url':
         return <iframe src={currentContent.payload} className="dc-content-frame" title={currentContent.judul} />;
       case 'image':
-        return <img src={currentContent.payload} alt={currentContent.judul} className="dc-content-img" />;
+        return currentContent.payload ? <img src={currentContent.payload} alt={currentContent.judul} className="dc-content-img" /> : null;
       case 'text':
         return <div className="dc-content-text">{currentContent.payload}</div>;
       default:
@@ -102,20 +117,7 @@ function DeviceView({ deviceId }: { deviceId: string }) {
 export default function DeviceClient() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [devices, setDevices] = useState<Device[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(localStorage.getItem('token') || '');
   const [inputId, setInputId] = useState('');
-
-  useEffect(() => {
-    if (!token) return;
-    fetch('http://localhost:3001/api/devices', {
-      headers: { 'Authorization': `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((data) => { setDevices(Array.isArray(data) ? data : []); setLoading(false); })
-      .catch(() => setLoading(false));
-  }, [token]);
 
   if (id) {
     return <DeviceView deviceId={id} />;
@@ -124,30 +126,12 @@ export default function DeviceClient() {
   return (
     <div className="dc-picker">
       <h1 className="dc-picker-title">Device Client</h1>
-      <p className="dc-picker-desc">Pilih device yang akan menampilkan konten:</p>
-
+      <p className="dc-picker-desc">Masukkan Device ID untuk menampilkan konten:</p>
       <div className="dc-input-row">
         <input value={inputId} onChange={(e) => setInputId(e.target.value)}
-          placeholder="Atau masukkan Device ID manual" />
+          placeholder="Device ID (contoh: 9bb9eb03-...)" />
         <button onClick={() => inputId && navigate(`/device/${inputId}`)}>Connect</button>
       </div>
-
-      {!token ? (
-        <p className="dc-muted">Login dulu di dashboard untuk lihat daftar device</p>
-      ) : loading ? (
-        <p className="dc-muted">Loading...</p>
-      ) : devices.length === 0 ? (
-        <p className="dc-muted">Belum ada device. Buat device di dashboard dulu.</p>
-      ) : (
-        <div className="dc-device-list">
-          {devices.map((d) => (
-            <button key={d.id} onClick={() => navigate(`/device/${d.id}`)} className="dc-device-btn">
-              <span className="dc-device-name"><strong>{d.nama}</strong> <span className="dc-device-loc">— {d.lokasi}</span></span>
-              <span className={d.status === 'online' ? 'dc-status-dot-online' : 'dc-status-dot-offline'} />
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

@@ -29,6 +29,19 @@ export default function PlaylistPage() {
     api.getPlaylists().then(setPlaylists).catch(console.error);
   }, []);
 
+  useEffect(() => {
+    const ws = new WebSocket('ws://localhost:3001');
+    ws.onmessage = (e) => {
+      const msg = JSON.parse(e.data);
+      if (msg.type === 'device_online' || msg.type === 'device_offline' || msg.type === 'device_deleted') {
+        api.getDevices().then(setDevices).catch(console.error);
+      } else if (msg.type === 'content_pushed') {
+        api.getPlaylists().then(setPlaylists).catch(console.error);
+      }
+    };
+    return () => ws.close();
+  }, []);
+
   const filteredDevices = useMemo(() => {
     if (!search) return devices;
     const q = search.toLowerCase();

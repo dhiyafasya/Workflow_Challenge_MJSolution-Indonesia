@@ -38,6 +38,12 @@ export default function Overview() {
         setDevices((prev) => prev.map((d) => d.id === msg.deviceId ? { ...d, status: 'online' } : d));
       else if (msg.type === 'device_offline')
         setDevices((prev) => prev.map((d) => d.id === msg.deviceId ? { ...d, status: 'offline' } : d));
+      else if (msg.type === 'device_deleted')
+        setDevices((prev) => prev.filter((d) => d.id !== msg.deviceId));
+      else if (msg.type === 'device_added' && msg.device)
+        setDevices((prev) => [...prev, msg.device]);
+      else if (msg.type === 'content_added' || msg.type === 'content_deleted')
+        api.getContents().then(setContents).catch(console.error);
     };
     return () => ws.close();
   }, []);
