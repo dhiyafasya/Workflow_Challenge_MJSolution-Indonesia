@@ -13,6 +13,8 @@ export default function ContentsPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editId, setEditId] = useState('');
   const [form, setForm] = useState({ judul: '', tipe: 'url', payload: '' });
+  const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState('');
 
   useEffect(() => {
     api.getContents().then(setContents).catch(console.error);
@@ -31,13 +33,33 @@ export default function ContentsPage() {
   const openAdd = () => {
     setEditId('');
     setForm({ judul: '', tipe: 'url', payload: '' });
+    setPreview('');
     setModalOpen(true);
   };
 
   const openEdit = (c: Content) => {
     setEditId(c.id);
     setForm({ judul: c.judul, tipe: c.tipe, payload: c.payload });
+    setPreview(c.tipe === 'image' ? c.payload : '');
     setModalOpen(true);
+  };
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('http://localhost:3001/api/upload', {
+        method: 'POST', credentials: 'include', body: fd,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setForm({ ...form, payload: data.url });
+      setPreview(data.url);
+    } catch (err: any) { alert(err.message); }
+    finally { setUploading(false); }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -148,7 +170,14 @@ export default function ContentsPage() {
           <div className="modal-field">
             <label>Payload / URL</label>
             <input placeholder="Contoh: https://..." value={form.payload}
-              onChange={(e) => setForm({ ...form, payload: e.target.value })} required />
+              onChange={(e) => { setForm({ ...form, payload: e.target.value }); setPreview(''); }} required />
+            {form.tipe === 'image' && (
+              <div className="upload-row">
+                <input type="file" accept="image/*" onChange={handleUpload} disabled={uploading} />
+                {uploading && <span className="upload-status">Mengupload...</span>}
+                {preview && <img src={preview} className="upload-preview" alt="preview" />}
+              </div>
+            )}
           </div>
           <div className="modal-actions">
             <button type="button" className="btn btn-secondary" onClick={() => setModalOpen(false)}>Batal</button>

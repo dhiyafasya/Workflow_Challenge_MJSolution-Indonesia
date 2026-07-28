@@ -8,6 +8,7 @@ import devicesRouter from './routes/devices.js';
 import contentsRouter from './routes/contents.js';
 import playlistsRouter from './routes/playlists.js';
 import authRouter, { authenticate } from './routes/auth.js';
+import uploadRouter from './routes/upload.js';
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/devices', authenticate, devicesRouter);
 app.use('/api/contents', authenticate, contentsRouter);
 app.use('/api/playlists', authenticate, playlistsRouter);
+app.use('/api/upload', authenticate, uploadRouter);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
