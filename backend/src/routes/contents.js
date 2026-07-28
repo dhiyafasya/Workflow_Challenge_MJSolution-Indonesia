@@ -21,9 +21,12 @@ router.post('/', async (req, res) => {
   const { judul, tipe, payload, filename } = req.body;
   if (!judul || !tipe) return res.status(400).json({ error: 'judul and tipe are required' });
 
+  const insertData = { judul, tipe, payload };
+  if (filename) insertData.filename = filename;
+
   const { data, error } = await supabase
     .from('contents')
-    .insert({ judul, tipe, payload, filename })
+    .insert(insertData)
     .select()
     .single();
 
@@ -35,9 +38,12 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   const { judul, tipe, payload, filename } = req.body;
+  const updateData = { judul, tipe, payload };
+  if (filename) updateData.filename = filename;
+
   const { data, error } = await supabase
     .from('contents')
-    .update({ judul, tipe, payload, filename })
+    .update(updateData)
     .eq('id', req.params.id)
     .select()
     .single();
