@@ -57,5 +57,5 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-ALTER TABLE users ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can read own data" ON users FOR SELECT USING (auth.uid() = id);
+-- Note: RLS not used on users table because we use custom JWT (not Supabase Auth)
+-- Passwords are hashed with bcrypt for security
