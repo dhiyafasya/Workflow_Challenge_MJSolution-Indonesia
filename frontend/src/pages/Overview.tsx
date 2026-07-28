@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../api';
+import DonutChart from '../components/DonutChart';
 
 interface Device { id: string; nama: string; lokasi: string; status: string; last_seen: string | null; }
 interface Content { id: string; judul: string; tipe: string; payload: string; created_at: string; }
@@ -27,6 +28,13 @@ export default function Overview() {
 
   const online = devices.filter((d) => d.status === 'online').length;
   const offline = devices.filter((d) => d.status === 'offline').length;
+  const onlinePct = devices.length ? Math.round((online / devices.length) * 100) : 0;
+  const offlinePct = devices.length ? Math.round((offline / devices.length) * 100) : 0;
+
+  const contentTypes = ['url', 'text', 'image'];
+  const typeCounts = contentTypes.map((t) => contents.filter((c) => c.tipe === t).length);
+  const maxType = Math.max(...typeCounts, 1);
+  const typeLabel: Record<string, string> = { url: 'URL', text: 'Teks', image: 'Gambar' };
 
   return (
     <>
@@ -36,23 +44,78 @@ export default function Overview() {
       </div>
 
       <div className="stats-grid">
-        <div className="card stat-card">
-          <div className="stat-value blue">{devices.length}</div>
-          <div className="stat-label">Total Devices</div>
+        <div className="metric-card">
+          <div className="metric-chart">
+            <DonutChart percentage={devices.length ? 100 : 0} color="#007aff" />
+          </div>
+          <div className="metric-info">
+            <span className="metric-value">{devices.length}</span>
+            <span className="metric-label">Total Devices</span>
+          </div>
         </div>
-        <div className="card stat-card">
-          <div className="stat-value green">{online}</div>
-          <div className="stat-label">Online</div>
+        <div className="metric-card">
+          <div className="metric-chart">
+            <DonutChart percentage={onlinePct} color="#34c759" />
+          </div>
+          <div className="metric-info">
+            <span className="metric-value">{online}</span>
+            <span className="metric-label">Online</span>
+          </div>
         </div>
-        <div className="card stat-card">
-          <div className="stat-value red">{offline}</div>
-          <div className="stat-label">Offline</div>
+        <div className="metric-card">
+          <div className="metric-chart">
+            <DonutChart percentage={offlinePct} color="#ff3b30" />
+          </div>
+          <div className="metric-info">
+            <span className="metric-value">{offline}</span>
+            <span className="metric-label">Offline</span>
+          </div>
         </div>
-        <div className="card stat-card">
-          <div className="stat-value blue">{contents.length}</div>
-          <div className="stat-label">Total Contents</div>
+        <div className="metric-card">
+          <div className="metric-chart">
+            <DonutChart percentage={contents.length ? 100 : 0} color="#007aff" />
+          </div>
+          <div className="metric-info">
+            <span className="metric-value">{contents.length}</span>
+            <span className="metric-label">Total Contents</span>
+          </div>
         </div>
       </div>
+
+      {devices.length > 0 && (
+        <div className="overview-row">
+          <div className="card overview-card">
+            <h3>Device Status</h3>
+            <div className="status-bar-wrap">
+              <div className="status-bar">
+                <div className="status-bar-fill online" style={{ width: `${onlinePct}%` }} />
+                <div className="status-bar-fill offline" style={{ width: `${offlinePct}%` }} />
+              </div>
+              <div className="status-bar-legend">
+                <span><span className="legend-dot" style={{ background: '#34c759' }} /> Online ({online})</span>
+                <span><span className="legend-dot" style={{ background: '#ff3b30' }} /> Offline ({offline})</span>
+              </div>
+            </div>
+          </div>
+
+          {contents.length > 0 && (
+            <div className="card overview-card">
+              <h3>Content Types</h3>
+              <div className="bar-chart">
+                {contentTypes.map((t, i) => (
+                  <div key={t} className="bar-row">
+                    <span className="bar-label">{typeLabel[t]}</span>
+                    <div className="bar-track">
+                      <div className="bar-fill" style={{ width: `${(typeCounts[i] / maxType) * 100}%` }} />
+                    </div>
+                    <span className="bar-value">{typeCounts[i]}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="card">
         <h3>Recent Devices</h3>

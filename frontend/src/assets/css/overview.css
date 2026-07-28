@@ -2,26 +2,155 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
-.stat-card {
-  text-align: center;
+.metric-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  border: 1px solid rgba(0,0,0,0.04);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.stat-value {
-  font-size: 36px;
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.metric-chart {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metric-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-value {
+  font-size: 28px;
   font-weight: 700;
+  color: #1d1d1f;
+  line-height: 1.1;
 }
 
-.stat-value.blue { color: #007aff; }
-.stat-value.green { color: #2e7d32; }
-.stat-value.red { color: #c62828; }
-
-.stat-label {
+.metric-label {
   font-size: 13px;
   color: #86868b;
-  margin-top: 4px;
+  margin-top: 2px;
+}
+
+.overview-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 700px) {
+  .overview-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.overview-card h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #86868b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+}
+
+.status-bar-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.status-bar {
+  height: 12px;
+  border-radius: 6px;
+  background: #f0f0f0;
+  display: flex;
+  overflow: hidden;
+}
+
+.status-bar-fill {
+  height: 100%;
+  transition: width 0.6s ease;
+}
+
+.status-bar-fill.online {
+  background: linear-gradient(90deg, #34c759, #30d158);
+}
+
+.status-bar-fill.offline {
+  background: linear-gradient(90deg, #ff3b30, #ff453a);
+}
+
+.status-bar-legend {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: #555;
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.bar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bar-label {
+  width: 50px;
+  font-size: 13px;
+  color: #555;
+  flex-shrink: 0;
+}
+
+.bar-track {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: #f0f0f0;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #007aff, #5856d6);
+  transition: width 0.6s ease;
+}
+
+.bar-value {
+  width: 24px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d1d1f;
+  text-align: right;
 }
 
 .table-name {
