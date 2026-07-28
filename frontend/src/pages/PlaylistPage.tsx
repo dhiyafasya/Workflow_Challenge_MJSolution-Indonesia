@@ -13,6 +13,8 @@ export default function PlaylistPage() {
   const [contents, setContents] = useState<Content[]>([]);
   const [playlists, setPlaylists] = useState<PlaylistItem[]>([]);
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 10;
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState('');
@@ -29,6 +31,10 @@ export default function PlaylistPage() {
     const q = search.toLowerCase();
     return devices.filter((d) => d.nama.toLowerCase().includes(q) || d.lokasi.toLowerCase().includes(q));
   }, [devices, search]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredDevices.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const paginatedDevices = filteredDevices.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
   const devicePlaylists = (deviceId: string) =>
     playlists.filter((p) => p.device_id === deviceId);
@@ -80,7 +86,7 @@ export default function PlaylistPage() {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#86868b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <input placeholder="Cari device..." value={search} onChange={(e) => setSearch(e.target.value)} />
+            <input placeholder="Cari device..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
           </div>
           <div className="toolbar-actions">
             <button className="btn btn-primary" onClick={() => openAddModal()}>
@@ -96,7 +102,7 @@ export default function PlaylistPage() {
       {filteredDevices.length === 0 ? (
         <div className="card"><div className="empty-state"><p>{devices.length === 0 ? 'Belum ada device. Buat device terlebih dahulu.' : 'Device tidak ditemukan.'}</p></div></div>
       ) : (
-        filteredDevices.map((d) => {
+        paginatedDevices.map((d) => {
           const items = devicePlaylists(d.id);
           const isExpanded = expandedId === d.id;
           return (
@@ -126,9 +132,9 @@ export default function PlaylistPage() {
                     <table>
                       <thead><tr><th>#</th><th>Content</th><th>Tipe</th><th>Aksi</th></tr></thead>
                       <tbody>
-                        {items.map((p) => (
+                        {items.map((p, idx) => (
                           <tr key={p.id}>
-                            <td className="order-num">{p.urutan + 1}</td>
+                            <td className="order-num">{idx + 1}</td>
                             <td className="content-name">{p.contents?.judul || '-'}</td>
                             <td><span className="badge badge-online">{tipeLabel[p.contents?.tipe] || p.contents?.tipe || '-'}</span></td>
                             <td>
@@ -151,6 +157,19 @@ export default function PlaylistPage() {
             </div>
           );
         })
+      )}
+      {totalPages > 1 && (
+        <div className="pagination">
+          <button className="btn-icon page-btn" disabled={safePage <= 1} onClick={() => setPage(safePage - 1)} title="Sebelumnya">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+            <button key={p} className={`page-btn ${p === safePage ? 'page-active' : ''}`} onClick={() => setPage(p)}>{p}</button>
+          ))}
+          <button className="btn-icon page-btn" disabled={safePage >= totalPages} onClick={() => setPage(safePage + 1)} title="Selanjutnya">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
       )}
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Tambah ke Playlist">
