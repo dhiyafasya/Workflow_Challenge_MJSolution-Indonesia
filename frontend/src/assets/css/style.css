@@ -321,12 +321,12 @@ input, select, button, textarea {
 }
 
 .page-active {
-  background: #007aff;
+  background: #16213e;
   color: #fff;
 }
 
 .page-active:hover {
-  background: #007aff;
+  background: #16213e;
 }
 
 .btn-excel {
