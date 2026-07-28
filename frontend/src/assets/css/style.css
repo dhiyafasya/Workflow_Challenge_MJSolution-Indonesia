@@ -284,6 +284,23 @@ input, select, button, textarea {
   background: #e8e8ed;
 }
 
+.btn-excel {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  background: #008000;
+  color: #fff;
+}
+
+.btn-excel:hover {
+  background: #006a00;
+}
+
 .btn-small {
   padding: 6px 14px;
   font-size: 12px;
